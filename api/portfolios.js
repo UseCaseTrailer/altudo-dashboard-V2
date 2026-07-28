@@ -12,7 +12,7 @@ function score(tasks) {
   return { v:Math.round(cp*.3+oS*.35+aS*.2+(Math.max(0,100-Math.round(tasks.filter(t=>!t.completed&&!t.due_on).length/n*100)*1.5))*.15), done, ov, ua, N:n };
 }
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   if(req.method==='OPTIONS') return res.status(200).end();
   if(req.method!=='GET') return res.status(405).json({error:'Method not allowed'});
   try {

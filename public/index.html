@@ -2196,11 +2196,9 @@ function goPMOProj(gid){
   var proj=null,port=null;
   P.forEach(function(p){p.projects.forEach(function(r){if(r.gid===gid){proj=r;port=p;}});});
   if(!proj)return;
-  selProj=proj;selPPort=port;pmoView="project";curMain="pmo";
-  document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("on");});
-  var tabs=document.querySelectorAll(".tab");if(tabs[0])tabs[0].classList.add("on");
-  document.getElementById("pg-pmo").classList.add("on");document.getElementById("pg-mkt").classList.remove("on");
-  saveState();renderPMO();window.scrollTo(0,0);
+  selProj=proj;selPPort=port;pmoView="project";
+  setTab("pmo");
+  window.scrollTo(0,0);
 }
 // localStorage persistence
 function saveState(){
@@ -4363,7 +4361,7 @@ function renderPortfolio(){
     '<div class="card"><div class="ct">Projects</div>'+port.projects.map(function(p){var ps=sc(p.tasks);return '<div class="projcard" onclick="drillProj(\''+p.gid+'\')">'+ring(ps.v,46)+'<div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:7px;margin-bottom:2px"><span style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(p.name)+'</span>'+bdg(ps.v)+'<span style="font-size:10px;color:#64748b">'+p.phase+'</span></div><div style="font-size:11px;color:#64748b">'+p.tasks.length+' tasks &middot; '+ps.done+' done &middot; '+ps.ov+' overdue</div></div>'+(p.budget?'<div style="text-align:right;flex-shrink:0"><div style="font-size:11px;font-weight:700;color:#475569">'+$m(p.budget)+'</div><div style="font-size:9px;color:#64748b">budget</div></div>':"")+'<svg width="11" height="11" viewBox="0 0 11 11" fill="none" style="color:#cbd5e1;flex-shrink:0"><path d="M3.5 2l4 3.5-4 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>';}).join("")+'</div>';
 }
 function renderProject(){
-  if(!selProj){pmoView='exec';renderPMO();return '';}
+  if(!selProj){pmoView='exec';setTab("pmo");return '';}
   var proj=selProj,port=selPPort||P.find(function(p){return p.projects.some(function(r){return r.gid===proj.gid;});});
   var s=sc(proj.tasks),rr=risks(proj.tasks,s);
   var counts={};proj.tasks.filter(function(t){return !t.done;}).forEach(function(t){var a=t.who||"Unassigned";counts[a]=(counts[a]||0)+1;});
@@ -4644,14 +4642,14 @@ function renderMkt(){
     '<div style="grid-column:1/-1;display:flex;justify-content:space-between;font-size:10px;color:#64748b;padding-top:4px"><span>&#8592; Lower volume</span><span>Higher volume &#8594;</span></div>'+
     '</div></div>'+
     '<div class="card"><div class="ct">Lead attainment % — all campaigns with targets</div>'+
-    [...hasL].sort(function(a,b){return (a.aL/a.tL)-(b.aL/b.tL);}).map(function(c){
+    [].concat(hasL).sort(function(a,b){return (a.aL/a.tL)-(b.aL/b.tL);}).map(function(c){
       var p=Math.round(c.aL/c.tL*100),col=p>=100?"#1D9E75":p>=80?"#378ADD":p>=60?"#BA7517":"#E24B4A";
       return hbar(c.s,p,p+"%",col,c.name+"\nActual: "+c.aL.toLocaleString()+" / Target: "+c.tL.toLocaleString()+"\nAttainment: "+p+"%");
     }).join("")+'</div></div>'+
     '<div class="g3">'+
-    '<div class="card"><div class="ct">Top 5 by ROI</div>'+[...hasROI].sort(function(a,b){return b.roi-a.roi;}).slice(0,5).map(function(c){return hbar(c.s,c.roi/4.13*100,c.roi+"x",roiC(c.roi),c.name+"\nROI: "+c.roi+"x\nBudget: "+$m(c.budget)+"\nType: "+c.type);}).join("")+'</div>'+
-    '<div class="card"><div class="ct">Top 5 by pipeline</div>'+[...hasPipe].sort(function(a,b){return b.pipe-a.pipe;}).slice(0,5).map(function(c){return hbar(c.s,c.pipe/2400000*100,$m(c.pipe),"#7F77DD",c.name+"\nPipeline: "+$m(c.pipe)+"\nBudget: "+$m(c.budget)+"\nROI: "+(c.roi||"--")+"x");}).join("")+'</div>'+
-    '<div class="card"><div class="ct">Worst lead attainment</div>'+[...hasL].sort(function(a,b){return (a.aL/a.tL)-(b.aL/b.tL);}).slice(0,5).map(function(c){var p=Math.round(c.aL/c.tL*100);return hbar(c.s,p,p+"%",p<40?"#E24B4A":p<70?"#BA7517":"#1D9E75",c.name+"\nActual: "+c.aL+"\nTarget: "+c.tL+"\nAttainment: "+p+"%");}).join("")+'</div></div>';
+    '<div class="card"><div class="ct">Top 5 by ROI</div>'+[].concat(hasROI).sort(function(a,b){return b.roi-a.roi;}).slice(0,5).map(function(c){return hbar(c.s,c.roi/4.13*100,c.roi+"x",roiC(c.roi),c.name+"\nROI: "+c.roi+"x\nBudget: "+$m(c.budget)+"\nType: "+c.type);}).join("")+'</div>'+
+    '<div class="card"><div class="ct">Top 5 by pipeline</div>'+[].concat(hasPipe).sort(function(a,b){return b.pipe-a.pipe;}).slice(0,5).map(function(c){return hbar(c.s,c.pipe/2400000*100,$m(c.pipe),"#7F77DD",c.name+"\nPipeline: "+$m(c.pipe)+"\nBudget: "+$m(c.budget)+"\nROI: "+(c.roi||"--")+"x");}).join("")+'</div>'+
+    '<div class="card"><div class="ct">Worst lead attainment</div>'+[].concat(hasL).sort(function(a,b){return (a.aL/a.tL)-(b.aL/b.tL);}).slice(0,5).map(function(c){var p=Math.round(c.aL/c.tL*100);return hbar(c.s,p,p+"%",p<40?"#E24B4A":p<70?"#BA7517":"#1D9E75",c.name+"\nActual: "+c.aL+"\nTarget: "+c.tL+"\nAttainment: "+p+"%");}).join("")+'</div></div>';
 
   var sHTML3b='<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">'+
     '<div class="chart-card"><div class="sec-hdr"><div><div class="ct">Full conversion funnel</div><div class="chart-sub">Impressions → Won (all campaigns)</div></div></div>'+
@@ -4665,10 +4663,10 @@ function renderMkt(){
     '<div style="font-size:11px;color:#64748b;margin-top:4px">Each channel type measured on its own terms — industry benchmarks included</div></div>'+
     '<div class="g2"><div class="card"><div class="ct">Pipeline efficiency ratio — pipeline per $1 spent</div>'+
     '<div style="font-size:11px;color:#64748b;margin-bottom:8px">The most executive-relevant paid media metric. LinkedIn ABM is your portfolio benchmark at $68.57 per $1.</div>'+
-    [...hasEff].sort(function(a,b){return b.pipeEff-a.pipeEff;}).map(function(c){return hbar(c.s,c.pipeEff/68.57*100,"$"+c.pipeEff.toFixed(1),effC(c.pipeEff),c.name+"\nPipeline: "+$m(c.pipe)+"\nSpend: "+$m(c.spent)+"\nEfficiency: $"+c.pipeEff.toFixed(1)+" pipeline per $1\nIndustry benchmark: $5-15 for B2B paid media");}).join("")+'</div>'+
+    [].concat(hasEff).sort(function(a,b){return b.pipeEff-a.pipeEff;}).map(function(c){return hbar(c.s,c.pipeEff/68.57*100,"$"+c.pipeEff.toFixed(1),effC(c.pipeEff),c.name+"\nPipeline: "+$m(c.pipe)+"\nSpend: "+$m(c.spent)+"\nEfficiency: $"+c.pipeEff.toFixed(1)+" pipeline per $1\nIndustry benchmark: $5-15 for B2B paid media");}).join("")+'</div>'+
     '<div class="card"><div class="ct">Cost per lead vs B2B industry benchmarks</div>'+
     '<table class="tbl"><thead><tr><th>Campaign</th><th>Your CPL</th><th>Benchmark</th><th>vs Benchmark</th></tr></thead><tbody>'+
-    [...hasCPL].sort(function(a,b){return a.cpl-b.cpl;}).map(function(c){
+    [].concat(hasCPL).sort(function(a,b){return a.cpl-b.cpl;}).map(function(c){
       var bms={Email:40,Webinar:45,"Paid Social":75,"Paid Search":85,ABM:250,Event:300};
       var bm=bms[c.type]||null;
       var vs=bm?(c.cpl<bm?'<span style="color:#16a34a;font-weight:600">&#9660; '+Math.round((1-c.cpl/bm)*100)+'% below</span>':'<span style="color:#dc2626;font-weight:600">&#9650; '+Math.round((c.cpl/bm-1)*100)+'% above</span>'):'-';
@@ -4993,4 +4991,4 @@ window.addEventListener("online",function(){var b=document.getElementById("offba
 window.addEventListener("offline",function(){var b=document.getElementById("offbanner");if(b)b.style.display="block";});
 </script>
 </body>
-</html>+'<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px"><div style="background:linear-gradient(135deg,#4f46e5,#7c3aed);border-radius:13px;padding:14px 16px;color:#fff"><div style="font-size:22px;font-weight:700;letter-spacing:-.03em;line-height:1.1">112.8%</div><div style="font-size:9px;opacity:.8;text-transform:uppercase;letter-spacing:.08em;margin-top:4px">Net Revenue Retention</div><div style="font-size:10px;font-weight:600;margin-top:5px;opacity:.85">Expansion > churn</div></div><div style="background:linear-gradient(135deg,#0891b2,#06b6d4);border-radius:13px;padding:14px 16px;color:#fff"><div style="font-size:22px;font-weight:700;letter-spacing:-.03em;line-height:1.1">94.8%</div><div style="font-size:9px;opacity:.8;text-transform:uppercase;letter-spacing:.08em;margin-top:4px">Gross Retention</div><div style="font-size:10px;font-weight:600;margin-top:5px;opacity:.85">Strong base retention</div></div><div style="background:linear-gradient(135deg,#16a34a,#22c55e);border-radius:13px;padding:14px 16px;color:#fff"><div style="font-size:22px;font-weight:700;letter-spacing:-.03em;line-height:1.1">2,516x</div><div style="font-size:9px;opacity:.8;text-transform:uppercase;letter-spacing:.08em;margin-top:4px">LTV:CAC Ratio</div><div style="font-size:10px;font-weight:600;margin-top:5px;opacity:.85">Best: Email 18,600x</div></div><div style="background:linear-gradient(135deg,#d97706,#f59e0b);border-radius:13px;padding:14px 16px;color:#fff"><div style="font-size:22px;font-weight:700;letter-spacing:-.03em;line-height:1.1">32%</div><div style="font-size:9px;opacity:.8;text-transform:uppercase;letter-spacing:.08em;margin-top:4px">Avg Win Rate</div><div style="font-size:10px;font-weight:600;margin-top:5px;opacity:.85">vs 28% benchmark</div></div><div style="background:linear-gradient(135deg,#dc2626,#ef4444);border-radius:13px;padding:14px 16px;color:#fff"><div style="font-size:22px;font-weight:700;letter-spacing:-.03em;line-height:1.1">$62</div><div style="font-size:9px;opacity:.8;text-transform:uppercase;letter-spacing:.08em;margin-top:4px">Blended CAC</div><div style="font-size:10px;font-weight:600;margin-top:5px;opacity:.85">Down from Q1 $74</div></div></div>'+</div>'+
+</html>
