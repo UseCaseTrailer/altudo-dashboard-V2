@@ -139,6 +139,23 @@ body.light::before {
     rgba(145,132,217,.04) 0%,
     transparent 70%);
 }
+*:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--primary) 68%, white);
+  outline-offset: 2px;
+}
+[role="button"] { cursor: pointer; }
+[role="button"]:focus-visible { border-radius: var(--radius-sm); }
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0,0,0,0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
 button { cursor: pointer; font-family: var(--font); }
 input, textarea, select { font-family: var(--font); }
 a { color: var(--primary); text-decoration: none; }
@@ -1188,11 +1205,11 @@ body.light .pill { border-radius: 10rem; }
     </button>
     <button class="tab" onclick="switchMain('mkt',this)">
       <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M1 9L4 5l2.5 3L9 4l2 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      Marketing Analytics
+      Marketing Analytics (Sample)
     </button>
     <button class="tab" onclick="switchMain('dept',this)">
       <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M1 3h10M1 6h7M1 9h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-      Department View
+      Department View (Sample)
     </button>
   </div>
 
@@ -1221,8 +1238,8 @@ body.light .pill { border-radius: 10rem; }
 <!-- MCP + Asana status strip -->
 <div id="status-bar">
   <div class="sb-item">
-    <div class="sb-dot green"></div>
-    <span>Asana connected</span>
+    <div class="sb-dot blue pulse" id="asana-status-dot"></div>
+    <span id="asana-status-label">Connecting to Asana…</span>
   </div>
   <div class="sb-divider"></div>
   <div class="sb-item">
@@ -1241,15 +1258,16 @@ body.light .pill { border-radius: 10rem; }
   <div class="sb-right">
     <div class="sb-item" id="sb-sync-time">
       <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4" stroke="currentColor" stroke-width="1.2" opacity=".5"/><path d="M5 3v2l1.5 1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
-      Last sync: just now
+      <span id="sync-label">Data snapshot: calculating…</span>
     </div>
-    <div class="sb-item" style="color:var(--text4)">
-      Portfolios: 5 &middot; Projects: 17 &middot; Tasks: 128
+    <div class="sb-item" id="dataset-counts" style="color:var(--text4)">
+      Calculating dataset totals…
     </div>
   </div>
 </div>
 
 <div id="content">
+  <div id="data-integrity-banner" role="status" aria-live="polite" style="display:none;margin-bottom:12px"></div>
   <div id="pg-pmo" class="pg on"></div>
   <div id="pg-mkt" class="pg"></div>
   <div id="pg-dept" class="pg"></div>
@@ -1257,16 +1275,16 @@ body.light .pill { border-radius: 10rem; }
 
 
 <!-- AI Settings Modal -->
-<div id="ai-settings-modal" onclick="if(event.target===this)closeAISettings()" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,.6);z-index:9999;align-items:center;justify-content:center;backdrop-filter:blur(5px)">
+<div id="ai-settings-modal" role="dialog" aria-modal="true" aria-labelledby="ai-settings-title" aria-describedby="ai-settings-description" onclick="if(event.target===this)closeAISettings()" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,.6);z-index:9999;align-items:center;justify-content:center;backdrop-filter:blur(5px)">
   <div style="background:var(--card-bg,#fff);border-radius:20px;width:600px;max-width:96vw;max-height:90vh;overflow-y:auto;box-shadow:0 28px 70px rgba(15,23,42,.3)">
 
     <!-- Header -->
     <div style="background:linear-gradient(135deg,#4f46e5,#7c3aed);padding:20px 24px;display:flex;align-items:flex-start;justify-content:space-between;position:sticky;top:0;z-index:1;border-radius:20px 20px 0 0">
       <div>
-        <div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:2px">&#129302; Enable AI Features</div>
-        <div style="font-size:11px;color:rgba(255,255,255,.65)">Portfolio Insights &middot; Improvement Plans &middot; Powered by Claude Sonnet 4</div>
+        <div id="ai-settings-title" style="font-size:16px;font-weight:700;color:#fff;margin-bottom:2px">&#129302; Enable AI Features</div>
+        <div id="ai-settings-description" style="font-size:11px;color:rgba(255,255,255,.65)">Portfolio Insights &middot; Improvement Plans &middot; Powered by Claude Sonnet 4</div>
       </div>
-      <button onclick="closeAISettings()" style="border:none;background:rgba(255,255,255,.2);color:#fff;border-radius:8px;width:30px;height:30px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0">&times;</button>
+      <button onclick="closeAISettings()" aria-label="Close AI settings" style="border:none;background:rgba(255,255,255,.2);color:#fff;border-radius:8px;width:30px;height:30px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0">&times;</button>
     </div>
 
     <div style="padding:24px">
@@ -1320,7 +1338,8 @@ body.light .pill { border-radius: 10rem; }
         </div>
 
         <div style="display:flex;gap:8px">
-          <input id="ai-key-input" type="password" placeholder="sk-ant-... (Anthropic) or sk-... (OpenAI)" 
+          <label for="ai-key-input" class="sr-only">Anthropic or OpenAI API key</label>
+          <input id="ai-key-input" type="password" aria-label="Anthropic or OpenAI API key" placeholder="sk-ant-... (Anthropic) or sk-... (OpenAI)" 
             style="flex:1;font-size:12px;padding:9px 13px;border:2px solid var(--border,#e2e8f0);border-radius:9px;background:var(--input-bg,#f8fafc);color:var(--text,#1a2332);outline:none;font-family:monospace"
             oninput="this.style.borderColor='#4f46e5'">
           <button onclick="saveAPIKey()" style="padding:9px 18px;background:#4f46e5;color:#fff;border:none;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">Save &amp; Activate</button>
@@ -1350,7 +1369,8 @@ body.light .pill { border-radius: 10rem; }
           <strong>Ideal for sharing with leadership or multiple team members.</strong>
         </div>
         <div style="display:flex;gap:8px">
-          <input id="ai-proxy-url" type="url" placeholder="https://altudo-dashboard.vercel.app"
+          <label for="ai-proxy-url" class="sr-only">AI proxy deployment URL</label>
+          <input id="ai-proxy-url" type="url" aria-label="AI proxy deployment URL" placeholder="https://altudo-dashboard.vercel.app"
             style="flex:1;font-size:12px;padding:9px 13px;border:2px solid var(--border,#e2e8f0);border-radius:9px;background:var(--input-bg,#f8fafc);color:var(--text,#1a2332);outline:none"
             oninput="this.style.borderColor='#0891b2'">
           <button onclick="saveProxyURL()" style="padding:9px 18px;background:#0891b2;color:#fff;border:none;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">Save Proxy</button>
@@ -1409,11 +1429,11 @@ body.light .pill { border-radius: 10rem; }
     </div>
   </div>
 </div>
-<button id="logbtn" onclick="toggleLog()" aria-label="Open activity log" aria-haspopup="true">
+<button id="logbtn" onclick="toggleLog()" aria-label="Open activity log" aria-haspopup="dialog" aria-expanded="false" aria-controls="logpanel">
   <svg width="13" aria-hidden="true" height="13" viewBox="0 0 13 13" fill="none"><rect x="1" y="1" width="11" height="2.5" rx="1" fill="currentColor" opacity=".7"/><rect x="1" y="5.25" width="8" height="2.5" rx="1" fill="currentColor"/><rect x="1" y="9.5" width="6" height="2.5" rx="1" fill="currentColor" opacity=".7"/></svg>
   Activity log <span id="logbadge"></span>
 </button>
-<div id="logpanel">
+<div id="logpanel" role="dialog" aria-label="Activity log" aria-hidden="true">
   <div id="loghdr">
     <span style="font-size:12px;font-weight:600;color:#1e293b">Action log <span id="logcnt" style="font-size:10px;background:#6366f1;color:#fff;padding:1px 7px;border-radius:20px;display:none"></span></span>
     <button onclick="toggleLog()" style="border:none;background:none;cursor:pointer;color:#64748b;font-size:16px;line-height:1">&#10005;</button>
@@ -1437,6 +1457,7 @@ body.light .pill { border-radius: 10rem; }
 var TODAY="2026-04-19", ME="Damola Egbeyemi", WS="1115662927527527";
 var curMain="pmo", pmoView="exec", selPort=null, selProj=null, selPPort=null, mktSec="pulse";
 var logEntries=[], logOpen=false, logNew=0;
+var REPORTING=null, DATA_MODE="loading", DATA_ERROR=null;
 
 // Campaign data - enriched with executive metrics
 var C=[
@@ -1782,7 +1803,12 @@ function addLog(type,detail,status){
   if(!logOpen){logNew++;var b=document.getElementById("logbadge");if(b){b.textContent=logNew;b.style.display="inline-block";}}
 }
 function toggleLog(){
-  logOpen=!logOpen;document.getElementById("logpanel").classList.toggle("on",logOpen);
+  var panel=document.getElementById("logpanel"),btn=document.getElementById("logbtn");
+  if(!panel)return;
+  logOpen=!logOpen;
+  panel.classList.toggle("on",logOpen);
+  panel.setAttribute("aria-hidden",String(!logOpen));
+  if(btn)btn.setAttribute("aria-expanded",String(logOpen));
   if(logOpen){logNew=0;var b=document.getElementById("logbadge");if(b){b.textContent="";b.style.display="none";}}
 }
 function renderLog(){
@@ -1815,7 +1841,10 @@ function doCopy(){
     navigator.clipboard.writeText(txt.value).then(function(){if(btn){btn.textContent="Copied!";setTimeout(function(){btn.textContent="Copy to clipboard";},2000);}}).catch(function(){try{document.execCommand("copy");}catch(e){}});
   } else {try{document.execCommand("copy");if(btn){btn.textContent="Copied!";setTimeout(function(){btn.textContent="Copy to clipboard";},2000);}}catch(e){}}
 }
-function doRefresh(){addLog("REFRESH_DASHBOARD","Fetching latest Asana data...","info");act("REFRESH_DASHBOARD",{action:"fetch_all_portfolios_projects_tasks_rebuild",workspace_gid:WS});}
+function doRefresh(){
+  addLog("REFRESH_DASHBOARD","Fetching latest Asana portfolio data...","info");
+  loadLiveReporting(true);
+}
 function showToast(msg,err){
   var t=document.getElementById("toast");if(!t)return;
   t.textContent=msg;t.className=err?"err":"";t.style.display="block";
@@ -1944,6 +1973,32 @@ function localAnswer(q){
   var ql=q.toLowerCase();
   var allP=P.reduce(function(a,port){return a.concat(port.projects.map(function(pr){return Object.assign({},pr,{portName:port.name});}));},[ ]);
   var allT=allP.reduce(function(a,p){return a.concat((p.tasks||[]).map(function(t){return Object.assign({},t,{proj:p.name,port:p.portName});}));},[ ]);
+  var liveRisk=null;
+  if(DATA_MODE==="live"&&REPORTING){
+    if(curMain!=="pmo"){
+      banner.style.display="block";
+      banner.style.cssText+=";padding:10px 13px;border:1px solid #c4b5fd;background:#f5f3ff;color:#5b21b6;border-radius:10px;font-size:11px";
+      banner.innerHTML="<strong>Sample scenario:</strong> this view uses illustrative marketing/department data and is not part of the live Asana PMO reporting model.";
+      if(label)label.textContent="Asana live · PMO only";
+      if(dot){dot.className="sb-dot green";dot.style.background="";}
+      return;
+    }
+    var ranking=REPORTING.aggregate.riskRanking||[];
+    liveRisk=ranking.find(function(row){return ql.indexOf(row.projectName.toLowerCase())>=0;})||null;
+    if(liveRisk&&ql.match(/why|at risk|off track|risk/)){
+      return '<strong>'+esc(liveRisk.projectName)+'</strong> has a calculated risk score of <strong>'+liveRisk.riskScore+'/100</strong>. '+
+        'The primary driver is '+esc(liveRisk.driver)+'. Its Asana-declared health is <strong>'+esc((liveRisk.declaredHealth||"unreported").replace(/_/g," "))+'</strong>.';
+    }
+    if(liveRisk&&ql.match(/what happens|if we don.t|forecast|likely|trajectory/)){
+      return '<strong>Directional forecast for '+esc(liveRisk.projectName)+':</strong> '+
+        (liveRisk.forecastDate?'completion around <strong>'+esc(liveRisk.forecastDate)+'</strong> versus the planned '+esc(liveRisk.plannedDate||"date not recorded")+'.':'a completion date cannot be calculated from the available velocity and scope data.')+
+        '<br><span style="font-size:10px;color:#64748b">Confidence: '+esc(liveRisk.forecastConfidence||"insufficient")+'; based on current scope and trailing four-week throughput.</span>';
+    }
+    if(liveRisk&&ql.match(/what should|recommend|do next|action/)){
+      return '<strong>Recommended next action for '+esc(liveRisk.projectName)+':</strong> '+esc(liveRisk.nextBestAction)+
+        '<br><span style="font-size:10px;color:#64748b">This recommendation is tied to a '+liveRisk.riskScore+'/100 calculated risk score and the driver: '+esc(liveRisk.driver)+'.</span>';
+    }
+  }
 
   // ── PMO questions ─────────────────────────────────
   if(ql.match(/overdue|overdue task|past due/)){
@@ -1954,6 +2009,12 @@ function localAnswer(q){
   }
 
   if(ql.match(/behind schedule|at risk|risk|off track/)){
+    if(DATA_MODE==="live"&&REPORTING){
+      var liveRows=(REPORTING.aggregate.riskRanking||[]).filter(function(row){return row.riskScore>0||row.declaredHealth==="at_risk"||row.declaredHealth==="off_track";}).slice(0,6);
+      if(!liveRows.length)return "✓ <strong>No material risk signal</strong> is visible in the current Asana snapshot.";
+      return '<strong>'+liveRows.length+' highest-priority project risks:</strong><ul style="margin:8px 0 0 16px;line-height:1.8">'+
+        liveRows.map(function(row){return '<li><strong>'+esc(row.projectName)+'</strong> — '+row.riskScore+'/100: '+esc(row.driver)+'</li>';}).join("")+'</ul>';
+    }
     var risky=allP.filter(function(p){var v=sc(p.tasks||[]).v;return v<80;}).sort(function(a,b){return sc(a.tasks||[]).v-sc(b.tasks||[]).v;});
     if(!risky.length)return "✓ <strong>All projects are On Track</strong> (80+/100). No immediate concerns.";
     var list2=risky.slice(0,6).map(function(p){var s=sc(p.tasks||[]);var g=s.v>=60?'⚠ At Risk':'🔴 Off Track';return '<li>'+g+' — <strong>'+esc(p.name)+'</strong> ('+s.v+'/100) in <em>'+esc(p.portName)+'</em></li>';}).join('');
@@ -2040,11 +2101,15 @@ function localAnswer(q){
   }
 
   // Default: show a formatted prompt to paste into Claude
+  var promptPipe=C.filter(function(c){return c.pipe;}).reduce(function(sum,c){return sum+c.pipe;},0);
+  var promptROI=C.filter(function(c){return c.roi!=null;});
+  var promptAvgROI=promptROI.length?(promptROI.reduce(function(sum,c){return sum+c.roi;},0)/promptROI.length).toFixed(2):"n/a";
+  var promptContext="Looking at my altudo.co marketing portfolio ("+C.length+" "+(qFilter==="all"?"FY2026 campaigns":qFilter+" campaigns")+", "+$m(promptPipe)+" total pipeline, "+promptAvgROI+"x avg ROI): ";
   return '💬 <strong>I don\'t have a built-in answer for that question.</strong><br><br>'+
     'Here\'s a ready-to-paste prompt for Claude:<br><br>'+
     '<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px;font-size:11px;font-family:monospace;line-height:1.6;color:#374151">'+
-    'Looking at my altudo.co marketing portfolio (11 FY2026 campaigns, $11.1M pipeline, 2.35x avg ROI): '+esc(q)+'</div>'+
-    '<button onclick="copyLocalAnswer(this)" data-text="Looking at my altudo.co marketing portfolio (11 FY2026 campaigns, $11.1M pipeline, 2.35x avg ROI): '+q.replace(/'/g,"\\'")+'" style="margin-top:8px;font-size:11px;padding:5px 12px;border-radius:7px;background:#1e293b;color:#fff;border:none;cursor:pointer">Copy prompt</button>';
+    esc(promptContext+q)+'</div>'+
+    '<button onclick="copyLocalAnswer(this)" data-text="'+esc(promptContext+q)+'" style="margin-top:8px;font-size:11px;padding:5px 12px;border-radius:7px;background:#1e293b;color:#fff;border:none;cursor:pointer">Copy prompt</button>';
 }
 
 function copyLocalAnswer(btn){
@@ -2096,7 +2161,9 @@ var CAMP_PROJ={
   "Paid Media - Google Demand Gen - Q2":"1214111524735305",
   "Webinar - AI Summit - Q2":"1214111524735301"
 };
-// Quarter filter state
+// Quarter filter state. C_ALL is the immutable reporting source; C is the
+// active view dataset so every KPI, chart and narrative uses the same filter.
+var C_ALL=C.slice();
 var qFilter="all";
 // ── Period pill handler (Monthly / Qtly / H1H2) ─────────────────────
 var _chartPeriod="M";
@@ -2123,36 +2190,15 @@ function updateChartPeriod(period, btnEl){
 // ── Quarter/date filter — filters campaign data and re-derives KPIs ──
 function setQ(q,el){
   qFilter=q;
-  document.querySelectorAll(".qbtn").forEach(function(b){b.classList.remove("on");});
-  if(el)el.classList.add("on");
-  // Filter C by quarter
-  var filtered=C.filter(function(c){
+  C=C_ALL.filter(function(c){
     if(q==="all")return true;
     if(q==="Q2")return c.s.indexOf("Q2")>=0||["Onboarding","Re-Engage","Google DG","AI Summit","Brand Refresh","AI Assistant"].some(function(n){return c.s.indexOf(n)>=0;});
     if(q==="Q3")return c.s.indexOf("Q3")>=0||["Meta Ads","EMEA Road.","Partner Web.","LinkedIn ABM","Dreamforce"].some(function(n){return c.s.indexOf(n)>=0;});
     return true;
   });
-  // Re-derive and update displayed KPIs without full re-render
-  var fp=filtered.filter(function(c){return c.pipe!=null;});
-  var fROI=filtered.filter(function(c){return c.roi!=null;});
-  var fL=filtered.filter(function(c){return c.aL!=null&&c.tL!=null;});
-  var fBgt=filtered.reduce(function(a,c){return a+(c.budget||0);},0);
-  var fPipe=fp.reduce(function(a,c){return a+c.pipe;},0);
-  var fAL=filtered.reduce(function(a,c){return a+(c.aL||0);},0);
-  var fTL=filtered.reduce(function(a,c){return a+(c.tL||0);},0);
-  var fROIavg=fROI.length?(fROI.reduce(function(a,c){return a+c.roi;},0)/fROI.length).toFixed(2):"—";
-  var fCPL=fL.length?Math.round(fL.reduce(function(a,c){return a+c.cpl;},0)/fL.length):"—";
-  var fAtt=fTL?Math.round(fAL/fTL*100):0;
-  // Update the KPI strip values in the DOM
-  var strip=document.getElementById("mkt-kpi-strip");
-  if(strip){
-    var items=strip.querySelectorAll(".ks-card");
-    var vals=[$m(fPipe), fROIavg+"x", fAtt+"%", "$"+fCPL, filtered.length+" campaigns"];
-    items.forEach(function(el,i){var v=el.querySelector(".ks-val");if(v&&vals[i])v.textContent=vals[i];});
-  }
-  // Update bar charts that depend on C
-  _updateFilteredCharts(filtered,fp,fBgt);
   saveState();
+  renderMkt();
+  showToast((q==="all"?"All quarters":q)+" applied across every marketing metric");
 }
 function _updateFilteredCharts(filtered,hasPipe,tBgt){
   // Budget pie
@@ -2196,9 +2242,11 @@ function goPMOProj(gid){
   var proj=null,port=null;
   P.forEach(function(p){p.projects.forEach(function(r){if(r.gid===gid){proj=r;port=p;}});});
   if(!proj)return;
-  selProj=proj;selPPort=port;pmoView="project";
-  setTab("pmo");
-  window.scrollTo(0,0);
+  selProj=proj;selPPort=port;pmoView="project";curMain="pmo";
+  document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("on");});
+  var tabs=document.querySelectorAll(".tab");if(tabs[0])tabs[0].classList.add("on");
+  document.getElementById("pg-pmo").classList.add("on");document.getElementById("pg-mkt").classList.remove("on");
+  saveState();renderPMO();window.scrollTo(0,0);
 }
 // localStorage persistence
 function saveState(){
@@ -2366,24 +2414,24 @@ function renderLifecycle(){
     '</div></div>';
 }
 
-// ── Capacity utilisation ─────────────────────────────────
+// ── Workload distribution ────────────────────────────────
 function renderCapacity(proj){
   var counts={};proj.tasks.filter(function(t){return !t.done;}).forEach(function(t){var a=t.who||"Unassigned";counts[a]=(counts[a]||0)+1;});
-  var WEEKLY_CAP=15; // assumed tasks per person per week
+  var maxLoad=Math.max.apply(null,Object.keys(counts).map(function(name){return counts[name];}).concat([1]));
   var rows=Object.keys(counts).sort(function(a,b){return counts[b]-counts[a];}).map(function(name){
-    var n=counts[name],pct=Math.round(n/WEEKLY_CAP*100),over=pct>100;
-    var col=over?"#dc2626":pct>75?"#d97706":"#22c55e";
+    var n=counts[name],pct=Math.round(n/maxLoad*100);
+    var col=name==="Unassigned"?"#dc2626":"#4f46e5";
     var ini=name.split(" ").map(function(w){return w[0];}).join("").slice(0,2).toUpperCase();
     return '<div class="cap-row">'+
       '<div style="width:28px;height:28px;border-radius:50%;background:'+(name==="Unassigned"?"#fef2f2":"#eff6ff")+';display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:'+(name==="Unassigned"?"#dc2626":"#2563eb")+';flex-shrink:0">'+ini+'</div>'+
-      '<div style="flex:1;min-width:0"><div style="display:flex;justify-content:space-between;font-size:10px;color:#475569;margin-bottom:3px"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(name)+'</span><span style="font-weight:600;color:'+col+'">'+n+' tasks ('+pct+'%'+( over?" ⚠":"")+') </span></div>'+
-        '<div class="cap-bar"><div class="cap-fill" style="width:'+Math.min(100,pct)+'%;background:'+col+'"></div>'+(over?'<div class="cap-line" style="left:100%"></div>':"")+
+      '<div style="flex:1;min-width:0"><div style="display:flex;justify-content:space-between;font-size:10px;color:#475569;margin-bottom:3px"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(name)+'</span><span style="font-weight:600;color:'+col+'">'+n+' open task'+(n===1?"":"s")+'</span></div>'+
+        '<div class="cap-bar"><div class="cap-fill" style="width:'+pct+'%;background:'+col+'"></div>'+
         '</div></div>'+
     '</div>';
   }).join("");
-  return '<div class="card" style="margin-bottom:10px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><div class="ct" style="margin:0">Capacity utilisation</div><span style="font-size:10px;color:#94a3b8">Based on '+WEEKLY_CAP+' tasks/person weekly capacity</span></div>'+
+  return '<div class="card" style="margin-bottom:10px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><div class="ct" style="margin:0">Workload distribution</div><span style="font-size:10px;color:#94a3b8">Open-task count, relative to highest load</span></div>'+
     (rows||'<p style="font-size:11px;color:#94a3b8;margin:0">All tasks complete</p>')+
-    '<div style="font-size:10px;color:#64748b;margin-top:8px;padding:7px 10px;background:#f8fafc;border-radius:7px">Red = over capacity. Industry standard: &gt;100% open tasks vs weekly capacity = execution risk. Consider reassigning or deferring.</div></div>';
+    '<div style="font-size:10px;color:#64748b;margin-top:8px;padding:7px 10px;background:#f8fafc;border-radius:7px"><strong>Data note:</strong> this is workload, not capacity utilization. Add consistent estimated-effort and capacity-hour fields to calculate a defensible utilization percentage.</div></div>';
 }
 
 // ── Monday brief / Exception view ───────────────────────
@@ -3952,12 +4000,14 @@ function updateAISettingsBtn(){
 function openAISettings(){
   var modal=document.getElementById('ai-settings-modal');
   if(!modal)return;
+  modal._returnFocus=document.activeElement;
   modal.style.display='flex';
   var keyInput=document.getElementById('ai-key-input');
   var proxyInput=document.getElementById('ai-proxy-url');
   if(keyInput&&_aiKey) keyInput.value=_aiKey;
   if(proxyInput&&_aiProxy) proxyInput.value=_aiProxy;
   renderAIConfigStatus();
+  setTimeout(function(){if(keyInput)keyInput.focus();},0);
 }
 
 
@@ -3973,7 +4023,10 @@ function clearAIKey(){
 }
 function closeAISettings(){
   var modal=document.getElementById('ai-settings-modal');
-  if(modal) modal.style.display='none';
+  if(modal){
+    modal.style.display='none';
+    if(modal._returnFocus&&modal._returnFocus.focus)modal._returnFocus.focus();
+  }
 }
 
 function renderAIConfigStatus(){
@@ -4221,16 +4274,213 @@ async function callClaude(userPrompt, systemPrompt, maxTokens){
   return JSON.stringify(data);
 }
 
+function showDataIntegrityBanner(){
+  var banner=document.getElementById("data-integrity-banner");
+  var label=document.getElementById("asana-status-label");
+  var dot=document.getElementById("asana-status-dot");
+  if(!banner)return;
+  if(DATA_MODE==="loading"){
+    banner.style.display="block";
+    banner.style.cssText+=";padding:10px 13px;border:1px solid #bfdbfe;background:#eff6ff;color:#1e40af;border-radius:10px;font-size:11px";
+    banner.innerHTML="<strong>Loading live Asana reporting data…</strong> The PMO view will refresh when pagination and metric calculation complete.";
+    if(label)label.textContent="Connecting to Asana…";
+    return;
+  }
+  if(DATA_MODE==="error"){
+    banner.style.display="block";
+    banner.style.cssText+=";padding:10px 13px;border:1px solid #fecaca;background:#fef2f2;color:#991b1b;border-radius:10px;font-size:11px";
+    banner.innerHTML="<strong>Live Asana data unavailable.</strong> "+esc(DATA_ERROR||"Unknown connector error")+
+      " The visible PMO data is a labelled sample dataset and must not be used as a current report. "+
+      '<button onclick="loadLiveReporting(true)" style="margin-left:8px;border:1px solid #ef4444;background:#fff;color:#991b1b;border-radius:6px;padding:3px 8px;cursor:pointer">Retry</button>';
+    if(label)label.textContent="Asana unavailable";
+    if(dot){dot.className="sb-dot";dot.style.background="#ef4444";}
+    return;
+  }
+  if(DATA_MODE==="live"&&REPORTING){
+    var dq=REPORTING.dataQuality||{},issues=(dq.accessIssues||[]).length;
+    var missing=dq.missing||{},missingTotal=(missing.projectStatus||0)+(missing.taskDueDate||0)+(missing.taskAssignee||0);
+    banner.style.display=(issues||missingTotal)?"block":"none";
+    banner.style.cssText+=";padding:10px 13px;border:1px solid #fde68a;background:#fffbeb;color:#78350f;border-radius:10px;font-size:11px";
+    banner.innerHTML="<strong>Live Asana data quality:</strong> "+
+      (issues?issues+" inaccessible scope"+(issues===1?"":"s")+"; ":"")+
+      (missing.projectStatus||0)+" projects without status, "+
+      (missing.taskDueDate||0)+" open tasks without due dates, and "+
+      (missing.taskAssignee||0)+" open tasks without assignees. "+
+      '<button onclick="showDataQualityDetails()" style="margin-left:8px;border:1px solid #d97706;background:#fff;color:#78350f;border-radius:6px;padding:3px 8px;cursor:pointer">View limitations</button>';
+    if(label)label.textContent="Asana live";
+    if(dot){dot.className="sb-dot green";dot.style.background="";}
+  }
+}
+
+function showDataQualityDetails(){
+  if(!REPORTING)return;
+  var dq=REPORTING.dataQuality||{};
+  var lines=[];
+  (dq.accessIssues||[]).forEach(function(issue){lines.push("Access: "+(issue.name||issue.scope)+" — "+issue.message);});
+  (dq.duplicateCustomFields||[]).forEach(function(issue){lines.push("Custom field: "+issue.message);});
+  (dq.unavailableMetrics||[]).forEach(function(issue){lines.push(issue.metric+": "+issue.reason);});
+  showAnswerModal("Data quality & metric availability",'<div style="font-size:11px;line-height:1.7">'+
+    (lines.length?'<ul style="margin:0 0 0 18px">'+lines.map(function(line){return "<li>"+esc(line)+"</li>";}).join("")+"</ul>":"No limitations reported.")+
+    "</div>");
+}
+
+function buildLiveProjectTrend(project){
+  var m=project.liveMetrics||{},buckets=m.throughput||[];
+  var total=(m.counts&&m.counts.total)||project.tasks.length;
+  var cumulative=0;
+  var done=buckets.map(function(bucket){cumulative+=bucket.completed||0;return cumulative;});
+  var burndown=done.map(function(value){return Math.max(0,total-value);});
+  var byOwner={};
+  (m.workload||[]).forEach(function(row){byOwner[row.assigneeName]=row.openTasks;});
+  return {
+    weeks:buckets.map(function(bucket){return bucket.end.slice(5);}),
+    done:done,
+    total:total,
+    byStatus:{
+      done:(m.counts&&m.counts.complete)||0,
+      overdue:(m.counts&&m.counts.overdue)||0,
+      upcoming:Math.max(0,((m.counts&&m.counts.open)||0)-((m.counts&&m.counts.overdue)||0)-((m.counts&&m.counts.noDueDate)||0)),
+      noDate:(m.counts&&m.counts.noDueDate)||0
+    },
+    byOwner:byOwner,
+    burndown:burndown
+  };
+}
+
+function applyReportingModel(model){
+  REPORTING=model;
+  DATA_MODE="live";
+  DATA_ERROR=null;
+  TODAY=(model.metadata.fetchedAt||new Date().toISOString()).slice(0,10);
+  WS=model.metadata.workspace&&model.metadata.workspace.gid||WS;
+  ASANA_STATUS={};
+  PROJ_TREND={};
+  P=(model.portfolios||[]).map(function(portfolio){
+    return {
+      gid:portfolio.gid,
+      name:portfolio.name,
+      color:portfolio.color||"#6366f1",
+      owner:portfolio.owner&&portfolio.owner.name,
+      projects:(portfolio.projects||[]).map(function(project){
+        var current=project.currentStatus;
+        if(current){
+          ASANA_STATUS[project.gid]={
+            color:project.health==="on_track"?"green":project.health==="at_risk"?"yellow":project.health==="off_track"?"red":"gray",
+            title:current.title||project.name,
+            summary:current.text||"No status narrative provided.",
+            extra:{}
+          };
+        }
+        var tasks=(project.tasks||[]).filter(function(task){return !task.parentTaskGid;}).map(function(task){
+          return {
+            gid:task.gid,n:task.name,done:task.completed,due:task.dueAt?task.dueAt.slice(0,10):null,
+            who:task.assignee&&task.assignee.name||null,assigneeGid:task.assignee&&task.assignee.gid||null,
+            createdAt:task.createdAt,completedAt:task.completedAt,startAt:task.startAt,
+            section:task.section,dependencies:task.dependencies||[],blocked:(task.dependencies||[]).some(function(dep){return !dep.completed;}),
+            tags:task.tags||[],customFields:task.customFields||[],resourceSubtype:task.resourceSubtype
+          };
+        });
+        var mapped={
+          gid:project.gid,name:project.name,type:"Asana project",phase:current&&current.title||"",
+          start:project.startAt&&project.startAt.slice(0,10),end:project.dueAt&&project.dueAt.slice(0,10),
+          owner:project.owner&&project.owner.name||null,declaredHealth:project.health,
+          currentStatus:current,customFields:project.customFields||[],sections:project.sections||[],
+          tasks:tasks,liveMetrics:project.metrics,unavailable:project.unavailable
+        };
+        PROJ_TREND[project.gid]=buildLiveProjectTrend(mapped);
+        return mapped;
+      })
+    };
+  });
+  var velocity=model.aggregate.throughput||[];
+  PORT_VELOCITY={
+    weeks:velocity.map(function(bucket){return bucket.end.slice(5);}),
+    completed:velocity.map(function(bucket){return bucket.completed;}),
+    added:velocity.map(function(bucket){return bucket.added;})
+  };
+  selPort=null;selProj=null;selPPort=null;pmoView="exec";
+  Object.keys(chartInst||{}).forEach(function(id){try{chartInst[id].destroy();}catch(e){}});
+  chartInst={};_pending={};projChartPid=null;
+  initStats();
+  showDataIntegrityBanner();
+  setTab("pmo");
+}
+
+async function loadLiveReporting(force){
+  DATA_MODE="loading";
+  showDataIntegrityBanner();
+  try{
+    var response=await fetch("/api/reporting"+(force?"?refresh="+Date.now():""),{headers:{Accept:"application/json"}});
+    var payload=await response.json();
+    if(!response.ok&&response.status!==207)throw new Error(payload.error||("Reporting API "+response.status));
+    if(!payload.data)throw new Error("Reporting API returned no data.");
+    applyReportingModel(payload.data);
+    addLog("REFRESH_DASHBOARD","Live Asana reporting data loaded.","success");
+    showToast("Live Asana reporting refreshed");
+  }catch(error){
+    DATA_MODE="error";
+    DATA_ERROR=error.message;
+    showDataIntegrityBanner();
+    initStats();
+    addLog("REFRESH_DASHBOARD","Live Asana refresh failed: "+error.message,"error");
+  }
+}
+
 function initStats(){
   var allT=P.reduce(function(a,port){return a.concat(port.projects.reduce(function(b,r){return b.concat(r.tasks);},[]));},[]);
   var ov=allT.filter(function(t){return !t.done&&t.due&&t.due<TODAY;}).length;
   var totPr=P.reduce(function(a,port){return a+port.projects.length;},0);
+  if(DATA_MODE==="live"&&REPORTING){
+    ov=REPORTING.aggregate.overdueTasks;
+    totPr=REPORTING.aggregate.projectCount;
+    allT={length:REPORTING.aggregate.taskCount};
+  }
+  var counts=document.getElementById("dataset-counts");
+  if(counts)counts.innerHTML="Portfolios: "+P.length+" &middot; Projects: "+totPr+" &middot; Tasks: "+allT.length;
+  var sync=document.getElementById("sync-label");
+  if(sync){
+    var snapshot=new Date(TODAY+"T12:00:00");
+    if(DATA_MODE==="live"&&REPORTING){
+      var fetched=new Date(REPORTING.metadata.fetchedAt);
+      sync.textContent="As of "+fetched.toLocaleString([],{year:"numeric",month:"short",day:"numeric",hour:"numeric",minute:"2-digit"});
+      sync.title="Live Asana data pull and metric calculation timestamp.";
+    }else{
+      sync.textContent="Sample snapshot: "+snapshot.toLocaleDateString([],{year:"numeric",month:"short",day:"numeric"});
+      sync.title="Sample data only. Live Asana reporting is not currently available.";
+    }
+  }
   var el=document.getElementById("topstats");if(!el)return;
   el.innerHTML=
     '<div class="topstat" data-tip="Tasks past due date"><div class="topstat-v" style="color:#dc2626">'+ov+'</div><div class="topstat-l">Overdue</div></div>'+
     '<div class="topstat" data-tip="Total projects"><div class="topstat-v" style="color:#4f46e5">'+totPr+'</div><div class="topstat-l">Projects</div></div>'+
     '<div class="topstat" data-tip="Active portfolios"><div class="topstat-v" style="color:#0891b2">'+P.length+'</div><div class="topstat-l">Portfolios</div></div>';
 }
+
+function upgradeInteractiveElements(root){
+  (root||document).querySelectorAll("[onclick]:not(button):not(a):not(input):not(select):not(textarea)").forEach(function(el){
+    if(!el.hasAttribute("role"))el.setAttribute("role","button");
+    if(!el.hasAttribute("tabindex"))el.setAttribute("tabindex","0");
+  });
+}
+document.addEventListener("keydown",function(event){
+  var modal=document.getElementById("ai-settings-modal");
+  if(event.key==="Escape"){
+    if(modal&&modal.style.display==="flex"){closeAISettings();return;}
+    if(logOpen)toggleLog();
+  }
+  var target=event.target.closest&&event.target.closest('[role="button"]');
+  if(target&&(event.key==="Enter"||event.key===" ")){
+    event.preventDefault();
+    target.click();
+  }
+  if(event.key==="Tab"&&modal&&modal.style.display==="flex"){
+    var focusable=Array.from(modal.querySelectorAll('button:not([disabled]),input:not([disabled]),a[href],select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])'));
+    if(!focusable.length)return;
+    var first=focusable[0],last=focusable[focusable.length-1];
+    if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
+    else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
+  }
+});
 // ============================================================
 // NAVIGATION
 // ============================================================
@@ -4256,6 +4506,8 @@ function setTab(id, skipRender){
   });
   // Render unless told to skip
   if(!skipRender && TAB_MAP[id]) TAB_MAP[id].render();
+  showDataIntegrityBanner();
+  setTimeout(function(){upgradeInteractiveElements(document.getElementById((TAB_MAP[id]||{}).page));},0);
   saveState();
 }
 
@@ -4291,7 +4543,7 @@ function switchMktSec(id){
   mktSec=id;saveState();
   document.querySelectorAll(".mkt-sidebar .snav-item").forEach(function(b){b.classList.toggle("on",b.dataset.sec===id);});
   document.querySelectorAll(".msec").forEach(function(s){s.classList.toggle("on",s.id==="ms-"+id);});
-  setTimeout(function(){buildCharts();flushCharts();},80);
+  setTimeout(function(){upgradeInteractiveElements(document.getElementById("ms-"+id));buildCharts();flushCharts();},80);
 }
 
 // ============================================================
@@ -4309,26 +4561,109 @@ function renderPMO(){
     if(selProj){var _sp=selProj;setTimeout(function(){if(typeof Chart!=="undefined"){buildProjCharts(_sp);setTimeout(function(){buildProjCharts(_sp);},300);}},150);}
   }
 }
+function renderLiveExecutiveInsights(){
+  if(DATA_MODE!=="live"||!REPORTING)return "";
+  var a=REPORTING.aggregate||{},h=a.healthDistribution||{};
+  var ranked=(a.riskRanking||[]).slice(0,5);
+  var headline=[];
+  if((h.off_track||0)>0)headline.push((h.off_track||0)+" project"+(h.off_track===1?" is":"s are")+" declared off track in Asana.");
+  if((h.at_risk||0)>0)headline.push((h.at_risk||0)+" project"+(h.at_risk===1?" is":"s are")+" declared at risk.");
+  if(a.blockedTasks)headline.push(a.blockedTasks+" open task"+(a.blockedTasks===1?" is":"s are")+" blocked by incomplete dependencies.");
+  if(a.overdueTasks)headline.push(a.overdueTasks+" open task"+(a.overdueTasks===1?" is":"s are")+" overdue.");
+  if(a.unassignedTasks)headline.push(a.unassignedTasks+" open task"+(a.unassignedTasks===1?" has":"s have")+" no assignee.");
+  if(!headline.length)headline.push("No material exception is visible in the current Asana snapshot.");
+  return '<div class="card" style="margin-bottom:14px;border-left:4px solid #4f46e5">'+
+    '<div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:12px">'+
+      '<div><div class="ct" style="margin:0 0 3px">Executive decision brief</div>'+
+      '<div style="font-size:10px;color:#64748b">Live Asana evidence · descriptive → diagnostic → predictive → prescriptive</div></div>'+
+      '<span style="font-size:9px;background:#eff6ff;color:#1d4ed8;padding:3px 8px;border-radius:20px">Forecast basis: trailing 4 weeks</span>'+
+    '</div>'+
+    '<div style="display:grid;grid-template-columns:minmax(220px,.8fr) minmax(0,1.7fr);gap:14px">'+
+      '<div style="background:#f8fafc;border-radius:10px;padding:11px 13px">'+
+        '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:#64748b;margin-bottom:6px">What changed / needs attention</div>'+
+        headline.slice(0,5).map(function(text,i){return '<div style="font-size:11px;line-height:1.55;margin-bottom:5px;display:flex;gap:6px"><span style="color:'+(i===0?"#dc2626":"#4f46e5")+'">●</span><span>'+esc(text)+'</span></div>';}).join("")+
+      '</div>'+
+      '<div style="overflow-x:auto"><table class="tbl"><thead><tr><th>Project</th><th>Risk</th><th>Primary driver</th><th>Forecast</th><th>Recommended action</th></tr></thead><tbody>'+
+        (ranked.length?ranked.map(function(row){
+          var riskCol=row.riskScore>=60?"#dc2626":row.riskScore>=30?"#d97706":"#16a34a";
+          var forecast=row.forecastDate
+            ?row.forecastDate+" ("+row.forecastConfidence+" confidence)"
+            :"Not computable";
+          return '<tr><td><strong>'+esc(row.projectName)+'</strong><div style="font-size:9px;color:#94a3b8">'+esc(row.portfolioName||"")+'</div></td>'+
+            '<td><span style="font-weight:700;color:'+riskCol+'">'+row.riskScore+'/100</span></td>'+
+            '<td style="font-size:10px;color:#475569">'+esc(row.driver)+'</td>'+
+            '<td style="font-size:10px">'+esc(forecast)+'</td>'+
+            '<td style="font-size:10px;color:#3730a3">'+esc(row.nextBestAction)+'</td></tr>';
+        }).join(""):'<tr><td colspan="5">No projects available.</td></tr>')+
+      '</tbody></table></div>'+
+    '</div>'+
+    '<div style="font-size:9px;color:#64748b;margin-top:9px">'+esc(REPORTING.metadata.forecastDisclaimer||"")+'</div>'+
+  '</div>';
+}
+
+function renderLiveProjectIntelligence(proj){
+  if(DATA_MODE!=="live"||!proj||!proj.liveMetrics)return "";
+  var m=proj.liveMetrics,c=m.counts||{},f=m.forecast||{},risk=m.risk||{};
+  var riskCol=risk.score>=60?"#dc2626":risk.score>=30?"#d97706":"#16a34a";
+  var blocked=(m.blockedTasks||[]).slice(0,4);
+  var bottlenecks=(m.bottlenecks||[]).slice(0,4);
+  var onTime=m.onTimeCompletion&&m.onTimeCompletion.trailing30||{};
+  var aging=m.overdueAging||{};
+  var milestone=m.milestoneAdherence||{};
+  return '<div class="g6" style="margin-bottom:12px">'+
+    [
+      ['On-time (30d)',onTime.rate==null?'—':onTime.rate+'%','#16a34a',(onTime.eligible||0)+' eligible tasks'],
+      ['Weekly throughput',m.weeklyVelocity==null?'—':m.weeklyVelocity,'#4f46e5','completed/week · trailing 4w'],
+      ['Lead time',m.averageLeadTimeDays==null?'—':m.averageLeadTimeDays+'d','#0284c7','creation to completion'],
+      ['Cycle time',m.averageCycleTimeDays==null?'—':m.averageCycleTimeDays+'d','#7c3aed','start to completion'],
+      ['Milestone adherence',milestone.rate==null?'—':milestone.rate+'%','#d97706',(milestone.eligible||0)+' dated milestones'],
+      ['Overdue aging',(aging['1_7']||0)+' / '+(aging['8_30']||0)+' / '+(aging['30_plus']||0),'#dc2626','1–7 / 8–30 / 30+ days']
+    ].map(function(x){return kpi(x[0],x[1],x[2],x[3],"Calculated from live Asana task dates. A dash means the required source dates are unavailable.");}).join("")+
+    '</div><div class="g2" style="margin-bottom:12px">'+
+    '<div class="card" style="border-left:4px solid '+riskCol+'">'+
+      '<div class="ct">Forecast &amp; next-best action</div>'+
+      '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px">'+
+        [['Risk',risk.score+"/100",riskCol],['Planned',f.plannedDate||"—","#475569"],['Forecast',f.forecastDate||"Not computable",f.forecastSlipDays?"#dc2626":"#16a34a"]].map(function(x){return '<div style="background:#f8fafc;border-radius:8px;padding:8px"><div style="font-size:9px;color:#94a3b8;text-transform:uppercase">'+x[0]+'</div><div style="font-size:12px;font-weight:700;color:'+x[2]+'">'+esc(x[1])+'</div></div>';}).join("")+
+      '</div>'+
+      '<div style="font-size:11px;color:#475569;margin-bottom:7px"><strong>Driver:</strong> '+esc(risk.driver||"Not available")+'</div>'+
+      '<div style="font-size:11px;background:#eef2ff;color:#3730a3;border-radius:8px;padding:9px 10px"><strong>Do next:</strong> '+esc(m.nextBestAction)+'</div>'+
+      '<div style="font-size:9px;color:#94a3b8;margin-top:7px">'+esc(f.basis||"")+' · '+esc(f.confidence||"")+' confidence</div>'+
+    '</div>'+
+    '<div class="card"><div class="ct">Execution diagnostics</div>'+
+      '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:10px">'+
+        [['Blocked',c.blocked||0,'#dc2626'],['Overdue',c.overdue||0,'#d97706'],['Unassigned',c.unassigned||0,'#7c3aed'],['No due date',c.noDueDate||0,'#64748b']].map(function(x){return '<div style="background:#f8fafc;border-radius:8px;padding:8px"><div style="font-size:9px;color:#94a3b8">'+x[0]+'</div><div style="font-size:16px;font-weight:700;color:'+x[2]+'">'+x[1]+'</div></div>';}).join("")+
+      '</div>'+
+      (blocked.length?'<div style="font-size:9px;text-transform:uppercase;color:#64748b;font-weight:700;margin-bottom:4px">Blocked tasks</div>'+blocked.map(function(t){return '<div style="font-size:10px;padding:4px 0;border-bottom:1px solid #f1f5f9">'+esc(t.name)+' <span style="color:#94a3b8">('+t.dependencies.filter(function(d){return !d.completed;}).length+' incomplete dependencies)</span></div>';}).join(""):"")+
+      (bottlenecks.length?'<div style="font-size:9px;text-transform:uppercase;color:#64748b;font-weight:700;margin:8px 0 4px">Current WIP concentration</div>'+bottlenecks.map(function(stage){return '<div style="font-size:10px;padding:3px 0">'+esc(stage.sectionName)+': <strong>'+stage.openTasks+'</strong> open'+(stage.averageAgeDays!=null?' · avg age '+stage.averageAgeDays+'d':'')+'</div>';}).join(""):"")+
+      '<div style="font-size:9px;color:#94a3b8;margin-top:7px">WIP concentration is not stage-to-stage cycle time; Asana section-entry history is not available in the current snapshot.</div>'+
+    '</div></div>';
+}
+
 function renderExec(){
-  var allP=[];P.forEach(function(p){p.projects.forEach(function(r){allP.push(Object.assign({},r,{pN:p.name,pC:p.color,pG:p.gid}));});});
+  var allP=[],seenProjects={};P.forEach(function(p){p.projects.forEach(function(r){if(seenProjects[r.gid])return;seenProjects[r.gid]=true;allP.push(Object.assign({},r,{pN:p.name,pC:p.color,pG:p.gid}));});});
   var allT=allP.reduce(function(a,r){return a.concat(r.tasks);},[]);var ws=sc(allT);
-  var byS={on:allP.filter(function(r){return sc(r.tasks).v>=80;}).length,at:allP.filter(function(r){var v=sc(r.tasks).v;return v>=60&&v<80;}).length,off:allP.filter(function(r){return sc(r.tasks).v<60;}).length};
+  var byS=DATA_MODE==="live"?{
+    on:allP.filter(function(r){return r.declaredHealth==="on_track";}).length,
+    at:allP.filter(function(r){return r.declaredHealth==="at_risk";}).length,
+    off:allP.filter(function(r){return r.declaredHealth==="off_track";}).length
+  }:{on:allP.filter(function(r){return sc(r.tasks).v>=80;}).length,at:allP.filter(function(r){var v=sc(r.tasks).v;return v>=60&&v<80;}).length,off:allP.filter(function(r){return sc(r.tasks).v<60;}).length};
   var topR=[];allP.forEach(function(r){var ps=sc(r.tasks);risks(r.tasks,ps).forEach(function(x){if(x.sev==="high"&&topR.length<6)topR.push(Object.assign({},x,{proj:r.name,port:r.pN}));});});
-  var crit=[];allP.forEach(function(r){r.tasks.filter(function(t){return !t.done&&t.due&&t.due>=TODAY&&t.due<="2026-04-30";}).forEach(function(t){crit.push(Object.assign({},t,{proj:r.name}));});});
+  var next14=new Date(new Date(TODAY+"T12:00:00").getTime()+14*86400000).toISOString().slice(0,10);
+  var crit=[];allP.forEach(function(r){r.tasks.filter(function(t){return !t.done&&t.due&&t.due>=TODAY&&t.due<=next14;}).forEach(function(t){crit.push(Object.assign({},t,{proj:r.name}));});});
   crit.sort(function(a,b){return a.due.localeCompare(b.due);});crit=crit.slice(0,8);
   var tB=allP.reduce(function(a,r){return a+(r.budget||0);},0),tPp=allP.reduce(function(a,r){return a+(r.pipe||0);},0);
-  return '<div style="background:linear-gradient(135deg,#0f172a 0%,#1e2d4f 100%);border-radius:16px;padding:20px 24px;margin-bottom:16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;position:relative;overflow:hidden">'+
+  return renderLiveExecutiveInsights()+'<div style="background:linear-gradient(135deg,#0f172a 0%,#1e2d4f 100%);border-radius:16px;padding:20px 24px;margin-bottom:16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;position:relative;overflow:hidden">'+
     '<div style="flex:1"><div style="font-size:10px;color:#475569;text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px">Executive Portfolio Report &middot; altudo.co</div>'+
     '<div style="font-size:19px;font-weight:700;color:#f8fafc">PMO Dashboard &mdash; Damola Egbeyemi</div>'+
     '<div style="font-size:11px;color:#475569;margin-top:2px">'+P.length+' portfolios &middot; '+allP.length+' projects &middot; '+allT.length+' tasks</div></div>'+
     '<div style="display:flex;gap:18px">'+[["Portfolios",P.length,"#818cf8"],["Projects",allP.length,"#34d399"],["Overdue",ws.ov,"#f87171"],["On Track",byS.on,"#4ade80"]].map(function(m){return '<div style="text-align:center"><div style="font-size:20px;font-weight:700;color:'+m[2]+'">'+m[1]+'</div><div style="font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:.06em">'+m[0]+'</div></div>';}).join("")+'</div></div>'+
-    '<div class="g6">'+[["On track",byS.on,"#16a34a","of "+allP.length+" projects",">=80/100 health score"],["At risk",byS.at,"#d97706","need attention","60-79/100"],["Off track",byS.off,"#dc2626","critical","<60/100"],["Overdue tasks",ws.ov,"#dc2626",ws.op+"% of all tasks","Past due date"],["Budget",$m(tB),"#6366f1","total allocated","Across all projects"],["Pipeline",$m(tPp),"#16a34a","influenced","Marketing projects"]].map(function(m){return kpi(m[0],m[1],m[2],m[3],m[4]);}).join("")+'</div>'+
+    '<div class="g6">'+[["On track",byS.on,"#16a34a","of "+allP.length+" projects",DATA_MODE==="live"?"Asana-declared status":">=80/100 health score"],["At risk",byS.at,"#d97706","need attention",DATA_MODE==="live"?"Asana-declared status":"60-79/100"],["Off track",byS.off,"#dc2626","critical",DATA_MODE==="live"?"Asana-declared status":"<60/100"],["Overdue tasks",ws.ov,"#dc2626",ws.op+"% of all tasks","Past due date"],["Budget",DATA_MODE==="live"?"—":$m(tB),"#6366f1",DATA_MODE==="live"?"not configured":"total allocated",DATA_MODE==="live"?"Requires consistent custom field GID":"Across all projects"],["Pipeline",DATA_MODE==="live"?"—":$m(tPp),"#16a34a",DATA_MODE==="live"?"not configured":"influenced",DATA_MODE==="live"?"Requires consistent custom field GID":"Marketing projects"]].map(function(m){return kpi(m[0],m[1],m[2],m[3],m[4]);}).join("")+'</div>'+
     '<div class="g2" style="margin-bottom:16px">'+
     '<div class="card"><div class="chart-header"><div class="ct" style="margin:0">Portfolio task velocity</div><span style="font-size:10px;color:#94a3b8">Completed vs added weekly</span></div>'+
     '<div class="chw" style="height:180px"><canvas id="ch-portVelocity" aria-label="Portfolio task velocity"></canvas></div>'+
     '<div class="chart-legend"><span><i style="background:#4f46e5"></i>Completed</span><span><i style="background:#e0e7ff;border:1px dashed #94a3b8"></i>Added</span></div></div>'+
     '<div class="card"><div class="ct">Health score distribution</div>'+
-    '<div class="donut-wrap"><div class="chw" style="height:160px"><canvas id="ch-healthDonut" aria-label="Health score distribution"></canvas></div></div>'+
+    '<div class="donut-wrap"><div class="chw" style="height:120px"><canvas id="ch-healthDonut" role="img" aria-label="Stacked bar showing on track, at risk, and off track project counts"></canvas></div></div>'+
     '<div class="chart-legend" style="justify-content:center"><span><i style="background:#22c55e"></i>On Track</span><span><i style="background:#f59e0b"></i>At Risk</span><span><i style="background:#ef4444"></i>Off Track</span></div></div></div>'+
     '<div class="g2">'+
     '<div class="card"><div class="ct">Portfolio performance</div>'+
@@ -4361,7 +4696,7 @@ function renderPortfolio(){
     '<div class="card"><div class="ct">Projects</div>'+port.projects.map(function(p){var ps=sc(p.tasks);return '<div class="projcard" onclick="drillProj(\''+p.gid+'\')">'+ring(ps.v,46)+'<div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:7px;margin-bottom:2px"><span style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(p.name)+'</span>'+bdg(ps.v)+'<span style="font-size:10px;color:#64748b">'+p.phase+'</span></div><div style="font-size:11px;color:#64748b">'+p.tasks.length+' tasks &middot; '+ps.done+' done &middot; '+ps.ov+' overdue</div></div>'+(p.budget?'<div style="text-align:right;flex-shrink:0"><div style="font-size:11px;font-weight:700;color:#475569">'+$m(p.budget)+'</div><div style="font-size:9px;color:#64748b">budget</div></div>':"")+'<svg width="11" height="11" viewBox="0 0 11 11" fill="none" style="color:#cbd5e1;flex-shrink:0"><path d="M3.5 2l4 3.5-4 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>';}).join("")+'</div>';
 }
 function renderProject(){
-  if(!selProj){pmoView='exec';setTab("pmo");return '';}
+  if(!selProj){pmoView='exec';renderPMO();return '';}
   var proj=selProj,port=selPPort||P.find(function(p){return p.projects.some(function(r){return r.gid===proj.gid;});});
   var s=sc(proj.tasks),rr=risks(proj.tasks,s);
   var counts={};proj.tasks.filter(function(t){return !t.done;}).forEach(function(t){var a=t.who||"Unassigned";counts[a]=(counts[a]||0)+1;});
@@ -4387,6 +4722,7 @@ function renderProject(){
         (t.who?t.who.split(" ")[0]:"Unassigned")+"</span>"+
       (t.due?"<span class=\"pill\" style=\"background:"+(ov?"#fef2f2":tod?"#fffbeb":"#f8fafc")+";color:"+(ov?"#dc2626":tod?"#d97706":"#64748b")+"\">"+(ov?"Overdue":tod?"Today":t.due)+"</span>":"")+
       (!t.due&&!t.done?"<span class=\"pill\" style=\"background:#fffbeb;color:#d97706\">No date</span>":"")+
+      (t.blocked?"<span class=\"pill\" title=\"Blocked by "+(t.dependencies||[]).filter(function(dep){return !dep.completed;}).length+" incomplete dependencies\" style=\"background:#fef2f2;color:#991b1b\">Blocked</span>":"")+
       "<button data-did=\""+drid+"\" onclick=\"toggleById(this)\" style=\"font-size:11px;padding:2px 8px;border-radius:6px;border:1px solid #e2e8f0;background:transparent;color:#64748b;cursor:pointer\">&middot;&middot;&middot;</button>"+
       "</div>"+
       "<div class=\"drawer\" id=\""+drid+"\">"+
@@ -4400,10 +4736,11 @@ function renderProject(){
       "</div>";
     return row;
   }
+  var dueSoon=new Date(new Date(TODAY+"T12:00:00").getTime()+7*86400000).toISOString().slice(0,10);
   var GROUPS=[
     {id:"ov",label:"&#9888; Overdue",color:"#dc2626",bg:"#fef2f2",tasks:proj.tasks.filter(function(t){return !t.done&&t.due&&t.due<TODAY;})},
-    {id:"tw",label:"&#128197; Due this week",color:"#d97706",bg:"#fffbeb",tasks:proj.tasks.filter(function(t){var soon="2026-04-26";return !t.done&&t.due&&t.due>=TODAY&&t.due<=soon;})},
-    {id:"up",label:"&#9654; Upcoming",color:"#0284c7",bg:"#eff6ff",tasks:proj.tasks.filter(function(t){var soon="2026-04-26";return !t.done&&t.due&&t.due>soon;})},
+    {id:"tw",label:"&#128197; Due this week",color:"#d97706",bg:"#fffbeb",tasks:proj.tasks.filter(function(t){return !t.done&&t.due&&t.due>=TODAY&&t.due<=dueSoon;})},
+    {id:"up",label:"&#9654; Upcoming",color:"#0284c7",bg:"#eff6ff",tasks:proj.tasks.filter(function(t){return !t.done&&t.due&&t.due>dueSoon;})},
     {id:"nd",label:"&#8212; No due date",color:"#64748b",bg:"#f8fafc",tasks:proj.tasks.filter(function(t){return !t.done&&!t.due;})},
     {id:"dn",label:"&#10003; Completed",color:"#16a34a",bg:"#f0fdf4",tasks:proj.tasks.filter(function(t){return t.done;})}
   ];
@@ -4424,6 +4761,7 @@ function renderProject(){
     '<div style="display:flex;gap:12px;flex-wrap:wrap">'+[["Completion",s.cS,"#22c55e"],["Schedule",s.oS,"#3b82f6"],["Resources",s.aS,"#8b5cf6"],["Structure",s.sS,"#06b6d4"]].map(function(f){return '<div style="flex:1;min-width:65px"><div style="display:flex;justify-content:space-between;font-size:9px;color:#475569;margin-bottom:2px"><span>'+f[0]+'</span><span style="font-weight:700;color:'+f[2]+'">'+f[1]+'</span></div><div style="height:3px;background:#1e293b;border-radius:2px;overflow:hidden"><div style="height:100%;width:'+f[1]+'%;background:'+f[2]+';border-radius:2px"></div></div></div>';}).join("")+'</div></div>'+
     (proj.budget?'<div style="display:flex;gap:12px">'+[[$m(proj.budget),"Budget","#818cf8"],[$m(proj.spent||0),"Spent","#fbbf24"],[$m(proj.pipe||0),"Pipeline","#34d399"]].map(function(m){return '<div style="text-align:center"><div style="font-size:14px;font-weight:700;color:'+m[2]+'">'+m[0]+'</div><div style="font-size:9px;color:#475569;text-transform:uppercase">'+m[1]+'</div></div>';}).join("")+'</div>':"")+'</div>'+
     '<div id="projRisk" style="display:none">'+renderRiskPanel(proj)+'</div>'+
+    renderLiveProjectIntelligence(proj)+
     '<div class="g6" style="margin-bottom:12px">'+[["Total",s.N,"#475569","All tasks"],["Done",s.done,"#16a34a","Completed"],["Open",s.N-s.done,"#0284c7","Remaining"],["Overdue",s.ov,"#dc2626","Past due"],["Unassigned",s.ua,"#d97706","No owner"],["No date",s.nd,"#d97706","Missing dates"]].map(function(m){return kpi(m[0],m[1],m[2],"",m[3]);}).join("")+'</div>'+
     '<div style="display:flex;gap:2px;margin-bottom:12px;background:#f8fafc;padding:3px;border-radius:9px;align-items:center;justify-content:space-between">'+
     '<div class="secnav" style="margin:0;background:transparent;padding:0"><button class="sbtn on" onclick="switchProjTab(this,\'ptd\')">Dashboard</button><button class="sbtn" onclick="switchProjTab(this,\'ptt\')">Tasks ('+s.N+')</button><button class="sbtn" onclick="switchProjTab(this,\'ptm\')">Team</button></div>'+
@@ -4477,7 +4815,7 @@ function renderPulse(tPipe,avgROI,utilPct,completedN,attPct,tAL,tTL,tBgt,tSpent,
     {l:"Total pipeline",    v:$m(tPipe),             s:"vs $3.3M target",       c:"#34d399"},
     {l:"Portfolio ROI",     v:avgROI+"x",             s:"B2B benchmark: 2x",     c:"#818cf8"},
     {l:"Budget utilised",   v:utilPct+"%",            s:$m(tSpent)+" of "+$m(tBgt), c:"#fbbf24"},
-    {l:"Campaigns on track",v:completedN+"/11",       s:"1 in planning",         c:"#4ade80"},
+    {l:"Campaigns on track",v:completedN+"/"+C.length,s:C.filter(function(c){return c.status==="Planning";}).length+" in planning",c:"#4ade80"},
     {l:"Lead attainment",   v:attPct+"%",             s:tAL.toLocaleString()+" of "+tTL.toLocaleString(), c:"#f87171"},
     {l:"Mktg-sourced pipe", v:$m(Math.round(sourcedPipe)), s:"vs "+$m(Math.round(influencedPipe))+" influenced", c:"#7dd3fc"}
   ];
@@ -4490,7 +4828,7 @@ function renderPulse(tPipe,avgROI,utilPct,completedN,attPct,tAL,tTL,tBgt,tSpent,
     }).join("")+'</div>';
 
   // 4 glass metric pills
-  var glass=[["$11.1M","Total Pipeline","#34d399"],["2.35\xd7","Portfolio ROI","#818cf8"],["112.8%","NRR","#4ade80"],["68%","Lead Attainment","#f87171"]];
+  var glass=[[$m(tPipe),"Total Pipeline","#34d399"],[avgROI+"\xd7","Portfolio ROI","#818cf8"],["112.8%","NRR","#4ade80"],[attPct+"%","Lead Attainment","#f87171"]];
   heroHTML+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">'+
     glass.map(function(g){return '<div style="background:rgba(255,255,255,.06);border-radius:9px;padding:10px 13px"><div style="font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px">'+g[1]+'</div><div style="font-size:18px;font-weight:700;color:'+g[2]+'">'+g[0]+'</div></div>';}).join("")+
   '</div></div>';
@@ -4642,14 +4980,14 @@ function renderMkt(){
     '<div style="grid-column:1/-1;display:flex;justify-content:space-between;font-size:10px;color:#64748b;padding-top:4px"><span>&#8592; Lower volume</span><span>Higher volume &#8594;</span></div>'+
     '</div></div>'+
     '<div class="card"><div class="ct">Lead attainment % — all campaigns with targets</div>'+
-    [].concat(hasL).sort(function(a,b){return (a.aL/a.tL)-(b.aL/b.tL);}).map(function(c){
+    [...hasL].sort(function(a,b){return (a.aL/a.tL)-(b.aL/b.tL);}).map(function(c){
       var p=Math.round(c.aL/c.tL*100),col=p>=100?"#1D9E75":p>=80?"#378ADD":p>=60?"#BA7517":"#E24B4A";
       return hbar(c.s,p,p+"%",col,c.name+"\nActual: "+c.aL.toLocaleString()+" / Target: "+c.tL.toLocaleString()+"\nAttainment: "+p+"%");
     }).join("")+'</div></div>'+
     '<div class="g3">'+
-    '<div class="card"><div class="ct">Top 5 by ROI</div>'+[].concat(hasROI).sort(function(a,b){return b.roi-a.roi;}).slice(0,5).map(function(c){return hbar(c.s,c.roi/4.13*100,c.roi+"x",roiC(c.roi),c.name+"\nROI: "+c.roi+"x\nBudget: "+$m(c.budget)+"\nType: "+c.type);}).join("")+'</div>'+
-    '<div class="card"><div class="ct">Top 5 by pipeline</div>'+[].concat(hasPipe).sort(function(a,b){return b.pipe-a.pipe;}).slice(0,5).map(function(c){return hbar(c.s,c.pipe/2400000*100,$m(c.pipe),"#7F77DD",c.name+"\nPipeline: "+$m(c.pipe)+"\nBudget: "+$m(c.budget)+"\nROI: "+(c.roi||"--")+"x");}).join("")+'</div>'+
-    '<div class="card"><div class="ct">Worst lead attainment</div>'+[].concat(hasL).sort(function(a,b){return (a.aL/a.tL)-(b.aL/b.tL);}).slice(0,5).map(function(c){var p=Math.round(c.aL/c.tL*100);return hbar(c.s,p,p+"%",p<40?"#E24B4A":p<70?"#BA7517":"#1D9E75",c.name+"\nActual: "+c.aL+"\nTarget: "+c.tL+"\nAttainment: "+p+"%");}).join("")+'</div></div>';
+    '<div class="card"><div class="ct">Top 5 by ROI</div>'+[...hasROI].sort(function(a,b){return b.roi-a.roi;}).slice(0,5).map(function(c){return hbar(c.s,c.roi/4.13*100,c.roi+"x",roiC(c.roi),c.name+"\nROI: "+c.roi+"x\nBudget: "+$m(c.budget)+"\nType: "+c.type);}).join("")+'</div>'+
+    '<div class="card"><div class="ct">Top 5 by pipeline</div>'+[...hasPipe].sort(function(a,b){return b.pipe-a.pipe;}).slice(0,5).map(function(c){return hbar(c.s,c.pipe/2400000*100,$m(c.pipe),"#7F77DD",c.name+"\nPipeline: "+$m(c.pipe)+"\nBudget: "+$m(c.budget)+"\nROI: "+(c.roi||"--")+"x");}).join("")+'</div>'+
+    '<div class="card"><div class="ct">Worst lead attainment</div>'+[...hasL].sort(function(a,b){return (a.aL/a.tL)-(b.aL/b.tL);}).slice(0,5).map(function(c){var p=Math.round(c.aL/c.tL*100);return hbar(c.s,p,p+"%",p<40?"#E24B4A":p<70?"#BA7517":"#1D9E75",c.name+"\nActual: "+c.aL+"\nTarget: "+c.tL+"\nAttainment: "+p+"%");}).join("")+'</div></div>';
 
   var sHTML3b='<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">'+
     '<div class="chart-card"><div class="sec-hdr"><div><div class="ct">Full conversion funnel</div><div class="chart-sub">Impressions → Won (all campaigns)</div></div></div>'+
@@ -4663,10 +5001,10 @@ function renderMkt(){
     '<div style="font-size:11px;color:#64748b;margin-top:4px">Each channel type measured on its own terms — industry benchmarks included</div></div>'+
     '<div class="g2"><div class="card"><div class="ct">Pipeline efficiency ratio — pipeline per $1 spent</div>'+
     '<div style="font-size:11px;color:#64748b;margin-bottom:8px">The most executive-relevant paid media metric. LinkedIn ABM is your portfolio benchmark at $68.57 per $1.</div>'+
-    [].concat(hasEff).sort(function(a,b){return b.pipeEff-a.pipeEff;}).map(function(c){return hbar(c.s,c.pipeEff/68.57*100,"$"+c.pipeEff.toFixed(1),effC(c.pipeEff),c.name+"\nPipeline: "+$m(c.pipe)+"\nSpend: "+$m(c.spent)+"\nEfficiency: $"+c.pipeEff.toFixed(1)+" pipeline per $1\nIndustry benchmark: $5-15 for B2B paid media");}).join("")+'</div>'+
+    [...hasEff].sort(function(a,b){return b.pipeEff-a.pipeEff;}).map(function(c){return hbar(c.s,c.pipeEff/68.57*100,"$"+c.pipeEff.toFixed(1),effC(c.pipeEff),c.name+"\nPipeline: "+$m(c.pipe)+"\nSpend: "+$m(c.spent)+"\nEfficiency: $"+c.pipeEff.toFixed(1)+" pipeline per $1\nIndustry benchmark: $5-15 for B2B paid media");}).join("")+'</div>'+
     '<div class="card"><div class="ct">Cost per lead vs B2B industry benchmarks</div>'+
     '<table class="tbl"><thead><tr><th>Campaign</th><th>Your CPL</th><th>Benchmark</th><th>vs Benchmark</th></tr></thead><tbody>'+
-    [].concat(hasCPL).sort(function(a,b){return a.cpl-b.cpl;}).map(function(c){
+    [...hasCPL].sort(function(a,b){return a.cpl-b.cpl;}).map(function(c){
       var bms={Email:40,Webinar:45,"Paid Social":75,"Paid Search":85,ABM:250,Event:300};
       var bm=bms[c.type]||null;
       var vs=bm?(c.cpl<bm?'<span style="color:#16a34a;font-weight:600">&#9660; '+Math.round((1-c.cpl/bm)*100)+'% below</span>':'<span style="color:#dc2626;font-weight:600">&#9650; '+Math.round((c.cpl/bm-1)*100)+'% above</span>'):'-';
@@ -4783,7 +5121,7 @@ function renderMkt(){
   document.getElementById("pg-mkt").innerHTML=
     '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:14px">'+
     '<div><h1 style="font-size:17px;font-weight:700;margin:0 0 3px">Marketing Campaigns &mdash; FY2026</h1>'+
-    '<div style="font-size:11px;color:#64748b">11 campaigns &middot; $'+Math.round(tBgt/1000)+'K budget &middot; NAMER + EMEA &middot; Q2/Q3 2026</div></div>'+
+    '<div style="font-size:11px;color:#64748b">'+C.length+' campaigns &middot; $'+Math.round(tBgt/1000)+'K budget &middot; NAMER + EMEA &middot; '+(qFilter==="all"?"Q2/Q3 2026":qFilter+" 2026")+'</div></div>'+
     '<div style="display:flex;align-items:center;gap:10px">'+
     '<div class="qfilter" style="margin-right:4px">'+["all","Q2","Q3"].map(function(q){return '<button class="qbtn'+(qFilter===q?" on":"")+'" onclick="setQ(\''+q+'\',this)">'+q+'</button>';}).join("")+'</div>'+
     '<div style="display:flex;align-items:center;gap:6px;font-size:11px;color:#64748b">'+
@@ -4880,13 +5218,22 @@ function buildCharts(){
   ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:Object.assign({},tt)},scales:{x:{grid:{display:false},ticks:{color:tc,font:{size:10}}},y:{grid:{color:gc},ticks:{color:tc,font:{size:10}}}}}});
 
   // Health score donut (exec view)
-  var allProjs=P.reduce(function(a,port){return a.concat(port.projects);},[]); 
-  var hCounts=[
+  var _seenChartProjects={};
+  var allProjs=P.reduce(function(a,port){port.projects.forEach(function(project){if(!_seenChartProjects[project.gid]){_seenChartProjects[project.gid]=true;a.push(project);}});return a;},[]); 
+  var hCounts=DATA_MODE==="live"?[
+    allProjs.filter(function(p){return p.declaredHealth==="on_track";}).length,
+    allProjs.filter(function(p){return p.declaredHealth==="at_risk";}).length,
+    allProjs.filter(function(p){return p.declaredHealth==="off_track";}).length
+  ]:[
     allProjs.filter(function(p){return sc(p.tasks).v>=80;}).length,
     allProjs.filter(function(p){var v=sc(p.tasks).v;return v>=60&&v<80;}).length,
     allProjs.filter(function(p){return sc(p.tasks).v<60;}).length
   ];
-  mk("ch-healthDonut",{type:"doughnut",data:{labels:["On Track","At Risk","Off Track"],datasets:[{data:hCounts,backgroundColor:["#10b981","#f59e0b","#ef4444"],borderWidth:4,borderColor:"#fff",hoverBorderWidth:0,hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,cutout:"65%",plugins:{legend:{display:false},tooltip:Object.assign({},tt)}}});
+  mk("ch-healthDonut",{type:"bar",data:{labels:["Portfolio health"],datasets:[
+    {label:"On Track",data:[hCounts[0]],backgroundColor:"#10b981",borderRadius:5},
+    {label:"At Risk",data:[hCounts[1]],backgroundColor:"#f59e0b",borderRadius:5},
+    {label:"Off Track",data:[hCounts[2]],backgroundColor:"#ef4444",borderRadius:5}
+  ]},options:{indexAxis:"y",responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:Object.assign({},tt)},scales:{x:{stacked:true,beginAtZero:true,grid:{display:false},ticks:{precision:0,color:tc}},y:{stacked:true,grid:{display:false},ticks:{color:tc}}}}});
 
   // Marketing ROI donut (attribution section)
   var roiData=[
@@ -4986,6 +5333,8 @@ initTheme();
 initStats();
 initAIConfig();
 setTab(curMain||"pmo");
+showDataIntegrityBanner();
+loadLiveReporting(false);
 if(!navigator.onLine)document.getElementById("offbanner").style.display="block";
 window.addEventListener("online",function(){var b=document.getElementById("offbanner");if(b)b.style.display="none";});
 window.addEventListener("offline",function(){var b=document.getElementById("offbanner");if(b)b.style.display="block";});
