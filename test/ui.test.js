@@ -17,6 +17,34 @@ test("top-level navigation has one Department control", () => {
   assert.equal(controls.length, 1);
 });
 
+test("Department navigation uses a left-menu dropdown with a General view", () => {
+  assert.match(html, /id="department-nav"/);
+  assert.match(html, /id="department-select"/);
+  assert.match(html, /General — all departments/);
+  assert.match(html, /function selectDepartment\(port\)/);
+  assert.match(html, /classList\.toggle\("on",id==="dept"\)/);
+});
+
+test("General Department view aggregates live portfolios without duplicate projects", () => {
+  assert.match(html, /live\.general=\{/);
+  assert.match(html, /name:"General"/);
+  assert.match(html, /if\(seen\[identity\]\)return/);
+  assert.match(html, /dPortSec = "general"/);
+});
+
+test("Department health charts retain complete and unreported projects", () => {
+  assert.match(html, /No status \('\+noStatus\+'\)/);
+  assert.match(html, /labels:\["On Track","At Risk","Off Track","Complete","No status"\]/);
+  assert.match(html, /counts\.gray/);
+});
+
+test("theme accessibility layer remaps hard-coded colors", () => {
+  assert.match(html, /Theme accessibility layer/);
+  assert.match(html, /body\.dark \[style\*="color:#64748b"\]/);
+  assert.match(html, /body\.dark \[style\*="background:#f8fafc"\]/);
+  assert.match(html, /@media \(forced-colors: active\)/);
+});
+
 test("static document IDs are unique", () => {
   const staticMarkup = html.slice(0, html.indexOf("<script>"));
   const ids = [...staticMarkup.matchAll(/\sid="([^"]+)"/g)].map(match => match[1]);

@@ -1,6 +1,15 @@
-# altudo.co Executive Dashboard v2.0
+# altudo.co Executive Dashboard v3.1
 
-Live Asana data · AI Insights & Improvements · Vercel serverless · Dark/Light mode
+Live Asana data · ChatGPT insights and Q&A · Vercel serverless · Dark/Light mode
+
+## v3.1 accessibility and Department reporting
+
+- Keeps dashboard text readable in both light and dark modes by remapping legacy inline colors to accessible theme tokens.
+- Adds a left-navigation Department dropdown with a default **General — all departments** view.
+- Builds the General view from every live department portfolio while deduplicating projects by Asana GID.
+- Preserves individual department drill-downs, charts, report sections, and selection state.
+- Includes Complete and No Status projects in Department health charts.
+- Replaces blank budget visualizations with an explicit structured-data requirement when Asana has no consistent budget fields.
 
 ## Interface
 
@@ -83,7 +92,9 @@ ASANA_WORKSPACE_GID    = 1115662927527527
 ASANA_PORTFOLIO_GIDS   = optional,comma-separated,portfolio-gids
 ASANA_DEPARTMENT_PORTFOLIO_GIDS = optional,comma-separated,department-portfolio-gids
 ASANA_PORTFOLIO_OWNER_GID = optional owner GID; defaults to me
-ANTHROPIC_API_KEY      = sk-ant-your_key_here   (optional — enables AI features server-side)
+OPENAI_API_KEY         = sk-your_openai_key_here
+OPENAI_MODEL           = gpt-5.6                (optional)
+OPENAI_REASONING_EFFORT = low                   (optional)
 ```
 
 The Department view is populated from the same canonical live reporting payload
@@ -110,7 +121,7 @@ vercel dev                   # → http://localhost:3000
 | `/api/reporting` | GET | Canonical live reporting model and data-quality report |
 | `/api/portfolios` | GET | Backward-compatible alias of `/api/reporting` |
 | `/api/task-action` | POST | Write to Asana |
-| `/api/ai` | POST | Anthropic proxy (keeps key server-side) |
+| `/api/ai` | POST | Grounded OpenAI Responses API gateway (keeps key server-side) |
 
 ## Project structure
 ```
@@ -118,7 +129,7 @@ altudo-dashboard/
 ├── api/
 │   ├── portfolios.js    # Live Asana data
 │   ├── task-action.js   # Asana write operations
-│   ├── ai.js            # Anthropic API proxy
+│   ├── ai.js            # OpenAI Responses API gateway
 │   └── health.js        # Health check
 ├── lib/asana.js         # Asana REST helper
 ├── public/index.html    # Dashboard (353KB, self-contained)
@@ -126,3 +137,16 @@ altudo-dashboard/
 ├── vercel.json
 └── package.json
 ```
+
+## ChatGPT portfolio intelligence
+
+The assistant uses the same timestamped Asana reporting payload as the PMO and
+Department dashboards. It supports multi-turn questions, portfolio insights,
+and improvement plans while requiring metric-level source markers in its
+answers. Deterministic calculations remain in `lib/reporting.js`; ChatGPT
+explains those calculations and recommends actions without fabricating missing
+capacity, baseline, or historical data.
+
+The browser never receives the OpenAI key. `/api/ai` calls the Responses API
+server-side with `store: false`. Set `OPENAI_MODEL` if you need to override the
+default model, and test the deployment from **AI Settings → Test Connection**.

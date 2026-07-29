@@ -580,7 +580,7 @@ body.light #bar { box-shadow: 0 1px 0 var(--border); }
 }
 #logfab:hover { border-color: var(--primary); color: var(--primary); }
 
-/* ═══ Ask Claude panel ═══════════════════════════════════════════════ */
+/* ═══ Ask ChatGPT panel ═══════════════════════════════════════════════ */
 #askbtn {
   position: fixed; bottom: 16px; right: 16px;
   display: flex; align-items: center; gap: 8px;
@@ -1252,8 +1252,8 @@ body.dark {
   --border3: rgba(255,255,255,.04);
   --text: #e6ebf2;
   --text2: #b3bccb;
-  --text3: #8a93a3;
-  --text4: #5a6473;
+  --text3: #aab4c3;
+  --text4: #8f9aaa;
   --shadow-sm: rgba(0,0,0,.22) 0 2px 4px;
   --shadow-md: 0 0 0 1px rgba(255,255,255,.08), rgba(0,0,0,.28) 0 4px 12px;
   --shadow-lg: 0 0 0 1px rgba(255,255,255,.08), rgba(0,0,0,.42) 0 16px 38px;
@@ -1266,6 +1266,12 @@ body {
   background: var(--bg);
   font-size: 14px;
   line-height: 1.4286;
+  color-scheme: dark;
+}
+body.light {
+  --text3: #5f6b7a;
+  --text4: #657180;
+  color-scheme: light;
 }
 .skip-link {
   position: fixed;
@@ -1389,6 +1395,30 @@ body {
   }
   body.light .tab.on svg,
   body.dark .tab.on svg { color: var(--gt-primary); opacity: 1; }
+  .department-nav {
+    display: none;
+    margin: 2px 12px 10px 38px;
+  }
+  .department-nav.on { display: block; }
+  .department-nav label {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--gt-sidebar-text);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+  .department-nav select {
+    width: 100%;
+    min-height: 34px;
+    padding: 6px 28px 6px 9px;
+    border: 1px solid rgba(255,255,255,.14);
+    border-radius: var(--radius-sm);
+    background: #111a27;
+    color: #f4f7fb;
+    font-size: 12px;
+  }
   body.light .bar-right,
   body.dark .bar-right {
     width: 100%;
@@ -1492,6 +1522,22 @@ body {
   body.dark #content { padding: 16px 12px 32px; }
   .mkt-layout,
   .dept-layout { display: block; }
+  .department-nav {
+    display: none;
+    min-width: 180px;
+    padding: 6px 8px;
+  }
+  .department-nav.on { display: block; }
+  .department-nav label { display: none; }
+  .department-nav select {
+    width: 100%;
+    min-height: 34px;
+    border: 1px solid rgba(255,255,255,.14);
+    border-radius: var(--radius-sm);
+    background: #111a27;
+    color: #f4f7fb;
+    padding: 6px 9px;
+  }
   .mkt-sidebar,
   .dept-sidebar {
     position: static;
@@ -1506,6 +1552,58 @@ body {
     width: auto;
     min-width: max-content;
     margin: 0;
+  }
+}
+
+/* Theme accessibility layer. Dynamic reports historically emitted literal
+   light-theme colors; remap those values so content keeps WCAG-readable
+   contrast after either theme is selected. */
+body, button, input, select, textarea, summary, option { color: var(--text); }
+input, select, textarea {
+  background-color: var(--input-bg);
+  border-color: var(--border);
+}
+::placeholder { color: var(--text3); opacity: 1; }
+:disabled { color: var(--text3); opacity: .72; }
+body.dark [style*="color:#0f172a"],
+body.dark [style*="color:#1a2332"],
+body.dark [style*="color:#1e2633"] { color: var(--text) !important; }
+body.dark [style*="color:#334155"],
+body.dark [style*="color:#475569"],
+body.dark [style*="color:#4a4d5c"] { color: var(--text2) !important; }
+body.dark [style*="color:#64748b"],
+body.dark [style*="color:#7e8896"],
+body.dark [style*="color:#94a3b8"] { color: var(--text3) !important; }
+body.dark [style*="background:#fff"],
+body.dark [style*="background:#ffffff"],
+body.dark [style*="background:#f8fafc"],
+body.dark [style*="background:#f9fafb"] { background: var(--bg3) !important; }
+body.dark [style*="background:#f1f5f9"],
+body.dark [style*="background:#f1f3f5"] { background: var(--bg4) !important; }
+body.dark [style*="background:#eff6ff"],
+body.dark [style*="background:#eef2ff"] {
+  background: rgba(66,99,235,.14) !important;
+  color: #c7d2fe !important;
+}
+body.dark [style*="background:#f0fdf4"] {
+  background: var(--success-dim) !important;
+  color: #a7f3d0 !important;
+}
+body.dark [style*="background:#fffbeb"] {
+  background: var(--warning-dim) !important;
+  color: #fde68a !important;
+}
+body.dark [style*="background:#fef2f2"] {
+  background: var(--danger-dim) !important;
+  color: #fecaca !important;
+}
+body.light [style*="color:#94a3b8"] { color: #5f6b7a !important; }
+body.light [style*="color:#64748b"] { color: #475569 !important; }
+.chart-sub, .chart-legend, .t-caption, .dport-cnt { color: var(--text3); }
+.chart-insight, .card, .chart-card, .kpi { forced-color-adjust: auto; }
+@media (forced-colors: active) {
+  .card, .chart-card, .kpi, button, input, select, textarea {
+    border: 1px solid CanvasText;
   }
 }
 </style>
@@ -1544,6 +1642,12 @@ body {
       <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M1 3h10M1 6h7M1 9h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
       Department View
     </button>
+    <div class="department-nav" id="department-nav">
+      <label for="department-select">Choose department</label>
+      <select id="department-select" aria-label="Choose department" onchange="selectDepartment(this.value)">
+        <option value="general">General — all departments</option>
+      </select>
+    </div>
   </div>
 
   <!-- Right controls -->
@@ -1615,7 +1719,7 @@ body {
     <div style="background:linear-gradient(135deg,#4f46e5,#7c3aed);padding:20px 24px;display:flex;align-items:flex-start;justify-content:space-between;position:sticky;top:0;z-index:1;border-radius:20px 20px 0 0">
       <div>
         <div id="ai-settings-title" style="font-size:16px;font-weight:700;color:#fff;margin-bottom:2px">&#129302; Enable AI Features</div>
-        <div id="ai-settings-description" style="font-size:11px;color:rgba(255,255,255,.65)">Portfolio Insights &middot; Improvement Plans &middot; Powered by Claude Sonnet 4</div>
+        <div id="ai-settings-description" style="font-size:11px;color:rgba(255,255,255,.65)">Grounded portfolio Q&amp;A &middot; Insights &middot; Recommendations &middot; Powered by OpenAI</div>
       </div>
       <button onclick="closeAISettings()" aria-label="Close AI settings" style="border:none;background:rgba(255,255,255,.2);color:#fff;border-radius:8px;width:30px;height:30px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0">&times;</button>
     </div>
@@ -1635,99 +1739,45 @@ body {
       <div style="margin-bottom:22px;padding:14px 16px;background:#eef2ff;border-radius:12px;border-left:4px solid #4f46e5">
         <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#4f46e5;margin-bottom:8px">How it works</div>
         <div style="font-size:12px;color:#3730a3;line-height:1.7">
-          When you click <strong>Generate AI Insights</strong> or <strong>Generate Improvement Plan</strong>, the dashboard sends your portfolio data to the Claude API and returns structured analysis. 
-          Your API key is stored <strong>only in your browser</strong> — it never touches our servers. 
-          Typical cost per analysis: <strong>$0.003–0.008 USD</strong> (less than 1 cent).
+          ChatGPT receives a compact, timestamped reporting context derived from the same live Asana payload used by every dashboard view. Answers must cite the metric and reporting period behind each numerical claim. Missing data is identified rather than estimated.
         </div>
       </div>
 
-      <!-- OPTION 1: API Key -->
+      <!-- SERVER CONFIGURATION -->
       <div style="margin-bottom:22px">
         <div style="display:flex;align-items:center;gap:9px;margin-bottom:10px">
-          <span style="background:#4f46e5;color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px">OPTION 1</span>
-          <span style="font-size:13px;font-weight:700;color:var(--text,#1a2332)">Direct API Key — Anthropic or OpenAI</span>
+          <span style="background:#10a37f;color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px">SECURE</span>
+          <span style="font-size:13px;font-weight:700;color:var(--text,#1a2332)">Server-managed OpenAI configuration</span>
         </div>
 
-        <!-- Step by step -->
         <div style="background:var(--bg3,#f8fafc);border-radius:12px;padding:14px 16px;margin-bottom:12px">
           <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text3,#64748b);margin-bottom:10px">Step-by-step setup</div>
-          
           <div style="display:flex;gap:11px;margin-bottom:10px;align-items:flex-start">
-            <div style="width:22px;height:22px;border-radius:50%;background:#4f46e5;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">1</div>
-            <div style="font-size:12px;color:var(--text2,#475569);line-height:1.6">Go to <a href="https://console.anthropic.com/settings/keys" target="_blank" style="color:#4f46e5;font-weight:600">console.anthropic.com/settings/keys</a> and sign in (or create a free account)</div>
+            <div style="width:22px;height:22px;border-radius:50%;background:#10a37f;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">1</div>
+            <div style="font-size:12px;color:var(--text2,#475569);line-height:1.6">Create an API key at <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener" style="color:#10a37f;font-weight:600">platform.openai.com/api-keys</a>.</div>
           </div>
           <div style="display:flex;gap:11px;margin-bottom:10px;align-items:flex-start">
-            <div style="width:22px;height:22px;border-radius:50%;background:#4f46e5;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">2</div>
-            <div style="font-size:12px;color:var(--text2,#475569);line-height:1.6">Click <strong>Create Key</strong>, name it <code style="background:#e0e7ff;padding:1px 5px;border-radius:4px">altudo-dashboard</code>, and click <strong>Create Key</strong></div>
+            <div style="width:22px;height:22px;border-radius:50%;background:#10a37f;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">2</div>
+            <div style="font-size:12px;color:var(--text2,#475569);line-height:1.6">In Vercel, add <code style="background:#dcfce7;padding:1px 5px;border-radius:4px">OPENAI_API_KEY</code> under <strong>Settings → Environment Variables</strong>.</div>
           </div>
           <div style="display:flex;gap:11px;margin-bottom:10px;align-items:flex-start">
-            <div style="width:22px;height:22px;border-radius:50%;background:#4f46e5;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">3</div>
-            <div style="font-size:12px;color:var(--text2,#475569);line-height:1.6">Copy the key — it starts with <code style="background:#e0e7ff;padding:1px 5px;border-radius:4px">sk-ant-...</code> — you only see it once</div>
+            <div style="width:22px;height:22px;border-radius:50%;background:#10a37f;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">3</div>
+            <div style="font-size:12px;color:var(--text2,#475569);line-height:1.6">Optionally set <code style="background:#dcfce7;padding:1px 5px;border-radius:4px">OPENAI_MODEL</code> and <code style="background:#dcfce7;padding:1px 5px;border-radius:4px">OPENAI_REASONING_EFFORT</code>. Defaults are <strong>gpt-5.6</strong> and <strong>low</strong>.</div>
           </div>
           <div style="display:flex;gap:11px;margin-bottom:10px;align-items:flex-start">
-            <div style="width:22px;height:22px;border-radius:50%;background:#4f46e5;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">4</div>
-            <div style="font-size:12px;color:var(--text2,#475569);line-height:1.6">Paste it below and click <strong>Save &amp; Activate</strong></div>
+            <div style="width:22px;height:22px;border-radius:50%;background:#10a37f;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px">4</div>
+            <div style="font-size:12px;color:var(--text2,#475569);line-height:1.6">Redeploy, then use <strong>Test Connection</strong> below. The key is never exposed to the browser.</div>
           </div>
-        </div>
-
-        <div style="display:flex;gap:8px">
-          <label for="ai-key-input" class="sr-only">Anthropic or OpenAI API key</label>
-          <input id="ai-key-input" type="password" aria-label="Anthropic or OpenAI API key" placeholder="sk-ant-... (Anthropic) or sk-... (OpenAI)" 
-            style="flex:1;font-size:12px;padding:9px 13px;border:2px solid var(--border,#e2e8f0);border-radius:9px;background:var(--input-bg,#f8fafc);color:var(--text,#1a2332);outline:none;font-family:monospace"
-            oninput="this.style.borderColor='#4f46e5'">
-          <button onclick="saveAPIKey()" style="padding:9px 18px;background:#4f46e5;color:#fff;border:none;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">Save &amp; Activate</button>
-        </div>
-        <div style="font-size:10px;color:var(--text4,#94a3b8);margin-top:6px">&#128274; Stored only in your browser localStorage. Never sent to any server other than the AI provider directly.</div>
-        <div style="margin-top:10px;padding:9px 12px;background:var(--bg3,#f8fafc);border-radius:8px;border:1px solid var(--border,#e8ecf0);font-size:11px;color:var(--text2,#475569)">
-          <strong>&#10024; Also works with OpenAI:</strong> Paste a key starting with <code style="background:#e0f2f1;padding:1px 5px;border-radius:4px;color:#065f46">sk-</code> from 
-          <a href="https://platform.openai.com/api-keys" target="_blank" style="color:#10a37f;font-weight:600">platform.openai.com/api-keys</a> — 
-          the dashboard auto-detects it and routes to <strong>GPT-4o</strong>. 
-          Anthropic keys (<code style="background:#e0e7ff;padding:1px 5px;border-radius:4px;color:#3730a3">sk-ant-...</code>) use <strong>Claude Sonnet 4</strong>.
         </div>
       </div>
 
-      <div style="text-align:center;font-size:11px;color:var(--text4,#94a3b8);margin:16px 0;display:flex;align-items:center;gap:10px">
-        <div style="flex:1;height:1px;background:var(--border,#e8ecf0)"></div>OR<div style="flex:1;height:1px;background:var(--border,#e8ecf0)"></div>
+      <div style="padding:12px 16px;background:#f0fdf4;border-radius:10px;border:1px solid #bbf7d0;margin-bottom:20px;font-size:11px;color:#166534;line-height:1.6">
+        <strong>Trust boundary:</strong> deterministic metrics are calculated by the dashboard. ChatGPT explains those metrics and recommends actions, but does not replace missing Asana data or present forecasts as commitments.
       </div>
 
-      <!-- OPTION 2: Vercel Proxy -->
-      <div style="margin-bottom:22px">
-        <div style="display:flex;align-items:center;gap:9px;margin-bottom:10px">
-          <span style="background:#0891b2;color:#fff;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px">OPTION 2</span>
-          <span style="font-size:13px;font-weight:700;color:var(--text,#1a2332)">Vercel Proxy — Best for teams</span>
-        </div>
-        <div style="background:var(--bg3,#f8fafc);border-radius:12px;padding:14px 16px;margin-bottom:12px;font-size:12px;color:var(--text2,#475569);line-height:1.7">
-          Deploy the altudo-dashboard Vercel repo (already built) and add a <code style="background:#e0f2fe;padding:1px 5px;border-radius:4px;color:#0369a1">/api/ai</code> endpoint. 
-          The API key lives securely on the server — team members just use the dashboard URL with no key entry required. 
-          <strong>Ideal for sharing with leadership or multiple team members.</strong>
-        </div>
-        <div style="display:flex;gap:8px">
-          <label for="ai-proxy-url" class="sr-only">AI proxy deployment URL</label>
-          <input id="ai-proxy-url" type="url" aria-label="AI proxy deployment URL" placeholder="https://altudo-dashboard.vercel.app"
-            style="flex:1;font-size:12px;padding:9px 13px;border:2px solid var(--border,#e2e8f0);border-radius:9px;background:var(--input-bg,#f8fafc);color:var(--text,#1a2332);outline:none"
-            oninput="this.style.borderColor='#0891b2'">
-          <button onclick="saveProxyURL()" style="padding:9px 18px;background:#0891b2;color:#fff;border:none;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap">Save Proxy</button>
-        </div>
-      </div>
-
-      <!-- PRICING NOTE -->
-      <div style="padding:12px 16px;background:#f0fdf4;border-radius:10px;border:1px solid #bbf7d0;margin-bottom:20px">
-        <div style="font-size:11px;font-weight:700;color:#14532d;margin-bottom:6px">&#128176; Cost estimate</div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">
-          <div style="font-size:11px;color:#15803d"><strong style="display:block;font-size:14px">~$0.005</strong>Per AI Insights generation</div>
-          <div style="font-size:11px;color:#15803d"><strong style="display:block;font-size:14px">~$0.008</strong>Per Improvements plan</div>
-          <div style="font-size:11px;color:#15803d"><strong style="display:block;font-size:14px">~$0.05–0.50</strong>Typical monthly total</div>
-        </div>
-        <div style="font-size:10px;color:#16a34a;margin-top:8px">New Anthropic accounts receive $5 free credit — enough for ~1,000 analyses. Billing only starts after credit is used.</div>
-      </div>
-
-      <!-- Test button + clear -->
       <div style="display:flex;gap:10px;justify-content:space-between;align-items:center">
         <button onclick="testAIConnection()" style="padding:9px 18px;background:var(--bg3,#f8fafc);border:1px solid var(--border,#e2e8f0);border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;color:var(--text2,#475569)">&#9654; Test Connection</button>
-        <div style="display:flex;gap:8px">
-          <button onclick="clearAIKey()" style="padding:9px 14px;background:transparent;border:1px solid #fecaca;border-radius:9px;font-size:12px;cursor:pointer;color:#dc2626">Clear key</button>
-          <button onclick="closeAISettings()" style="padding:9px 18px;background:#1e293b;color:#fff;border:none;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer">Done</button>
-        </div>
+        <button onclick="closeAISettings()" style="padding:9px 18px;background:#1e293b;color:#fff;border:none;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer">Done</button>
       </div>
 
     </div>
@@ -1735,25 +1785,25 @@ body {
 </div>
 
 
-<!-- Ask Claude floating panel -->
-<div id="askbtn" onclick="toggleAsk()" role="button" tabindex="0" aria-label="Ask Claude about this dashboard" aria-haspopup="true"
+<!-- Ask ChatGPT floating panel -->
+<div id="askbtn" onclick="toggleAsk()" role="button" tabindex="0" aria-label="Ask ChatGPT about this dashboard" aria-haspopup="true"
   style="position:fixed;bottom:20px;right:20px;background:#6366f1;color:#fff;border:none;border-radius:10px;padding:9px 14px;font-size:11px;font-weight:600;cursor:pointer;z-index:99;display:flex;align-items:center;gap:7px;box-shadow:0 4px 12px rgba(99,102,241,.35);transition:background .15s"
   onmouseover="this.style.background='#4f46e5'" onmouseout="this.style.background='#6366f1'"
   onkeydown="if(event.key==='Enter'||event.key===' ')toggleAsk()">
   <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M5.25 5.25a1.75 1.75 0 1 1 2.45 1.61A.75.75 0 0 0 7 7.59V8.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="7" cy="10.25" r=".75" fill="currentColor"/></svg>
-  Ask Claude
+  Ask ChatGPT
 </div>
-<div id="askpanel" role="dialog" aria-modal="true" aria-label="Ask Claude"
+<div id="askpanel" role="dialog" aria-modal="true" aria-label="Ask ChatGPT"
   style="position:fixed;bottom:72px;right:20px;width:340px;background:#fff;border:1px solid #e2e8f0;border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,.12);z-index:100;display:none;flex-direction:column;overflow:hidden">
   <div style="padding:13px 15px;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between;background:#6366f1">
-    <span style="font-size:12px;font-weight:600;color:#fff">Ask Claude about this dashboard</span>
-    <button onclick="toggleAsk()" aria-label="Close Ask Claude" style="border:none;background:none;cursor:pointer;color:rgba(255,255,255,.8);font-size:16px;line-height:1;padding:0">✕</button>
+    <span style="font-size:12px;font-weight:600;color:#fff">Ask ChatGPT about live portfolio data</span>
+    <button onclick="toggleAsk()" aria-label="Close Ask ChatGPT" style="border:none;background:none;cursor:pointer;color:rgba(255,255,255,.8);font-size:16px;line-height:1;padding:0">✕</button>
   </div>
   <div style="padding:12px 14px">
     <div style="font-size:11px;color:#64748b;margin-bottom:8px">Suggested questions:</div>
     <div id="asksugg" style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px"></div>
     <div style="display:flex;gap:7px">
-      <input id="askinput" type="text" placeholder="Ask about your portfolio…" aria-label="Ask Claude a question"
+      <input id="askinput" type="text" placeholder="Ask about risk, delivery, workload…" aria-label="Ask ChatGPT a question"
         onkeydown="if(event.key==='Enter')sendAsk()"
         style="flex:1;height:36px;font-size:11px;padding:0 11px;border-radius:7px;border:2px solid #e2e8f0;outline:none;font-family:inherit;transition:border-color .15s"
         onfocus="this.style.borderColor='#6366f1'" onblur="this.style.borderColor='#e2e8f0'"/>
@@ -1771,13 +1821,13 @@ body {
     <span style="font-size:12px;font-weight:600;color:#1e293b">Action log <span id="logcnt" style="font-size:10px;background:#6366f1;color:#fff;padding:1px 7px;border-radius:20px;display:none"></span></span>
     <button onclick="toggleLog()" style="border:none;background:none;cursor:pointer;color:#64748b;font-size:16px;line-height:1">&#10005;</button>
   </div>
-  <div id="logbody"><div style="padding:24px 14px;text-align:center;color:#64748b;font-size:12px">No actions yet. Use task buttons to send commands to Claude.</div></div>
+  <div id="logbody"><div style="padding:24px 14px;text-align:center;color:#64748b;font-size:12px">No actions yet. Use task buttons to send commands to ChatGPT.</div></div>
 </div>
 <div id="toast"></div>
 <div id="cpmodal" onclick="if(event.target===this)closeCPModal()">
   <div id="cpbox">
-    <div style="font-size:13px;font-weight:600;margin-bottom:8px">&#128203; Paste into Claude chat to execute in Asana:</div>
-    <p style="font-size:11px;color:#64748b;margin-bottom:10px">Claude will run this action immediately when you paste it.</p>
+    <div style="font-size:13px;font-weight:600;margin-bottom:8px">&#128203; Paste into ChatGPT with the Asana connector to execute in Asana:</div>
+    <p style="font-size:11px;color:#64748b;margin-bottom:10px">ChatGPT can run this action when the Asana connector is enabled immediately when you paste it.</p>
     <textarea id="cptxt" readonly style="width:100%;height:80px;font-size:11px;font-family:monospace;padding:8px;border-radius:7px;border:1px solid #e2e8f0;resize:none;box-sizing:border-box;background:#f8fafc"></textarea>
     <div style="display:flex;gap:8px;margin-top:12px;justify-content:flex-end">
       <button id="cpcopybtn" onclick="doCopy()" style="padding:7px 16px;border-radius:7px;background:#1e293b;color:#fff;border:none;cursor:pointer;font-size:12px;font-weight:600">Copy to clipboard</button>
@@ -1861,7 +1911,7 @@ var PIPE_AGE=[
 // PMO Portfolios
 var P=[
   {gid:"1213303616045074",name:"Damola's Portfolio",color:"#6366f1",projects:[
-    {gid:"1214100169970896",name:"Claude x Asana MCP — PM Demo",type:"Technology",phase:"Execution",start:"2026-04-01",end:"2026-05-02",tasks:[
+    {gid:"1214100169970896",name:"ChatGPT x Asana MCP — PM Demo",type:"Technology",phase:"Execution",start:"2026-04-01",end:"2026-05-02",tasks:[
       {gid:"1214100105869848",n:"Define project scope and objectives",done:true,due:"2026-04-03",who:ME},
       {gid:"1214100059293114",n:"Identify stakeholders and demo audience",done:true,due:"2026-04-04",who:ME},
       {gid:"1214100059248807",n:"Set up Asana MCP integration",done:false,due:"2026-04-09",who:ME},
@@ -2150,7 +2200,7 @@ function renderLog(){
   if(!logEntries.length){body.innerHTML='<div style="padding:24px 14px;text-align:center;color:#64748b;font-size:12px">No actions yet.</div>';return;}
   var icons={COMPLETE_TASK:"&#10003;",ADD_COMMENT:"&#128172;",ASSIGN_TASK:"&#128100;",UPDATE_DUE_DATE:"&#128197;",RENAME_TASK:"&#9999;",CREATE_TASK:"&#65291;",REFRESH_DASHBOARD:"&#8635;"},
     labels={COMPLETE_TASK:"Task updated",ADD_COMMENT:"Comment added",ASSIGN_TASK:"Assign task",UPDATE_DUE_DATE:"Due date set",RENAME_TASK:"Rename",CREATE_TASK:"Task created",REFRESH_DASHBOARD:"Refresh"},
-    sb={ok:'<span class="les lok">&#10003; Copied &mdash; paste into Claude chat</span>',info:'<span class="les linf">&#8505; Note</span>',err:'<span class="les lerr">&#10005; Error</span>'};
+    sb={ok:'<span class="les lok">&#10003; Copied &mdash; paste into ChatGPT with the Asana connector</span>',info:'<span class="les linf">&#8505; Note</span>',err:'<span class="les lerr">&#10005; Error</span>'};
   body.innerHTML=logEntries.map(function(e){return '<div class="le"><div class="let">'+e.time+'</div><div class="lem">'+(icons[e.type]||"&rarr;")+" "+(labels[e.type]||e.type)+'</div><div class="led">'+esc(e.detail)+'</div>'+(sb[e.status]||sb.ok)+'</div>';}).join("");
 }
 // ============================================================
@@ -2159,11 +2209,11 @@ function renderLog(){
 function act(type,params){
   var cmd="[ASANA_ACTION:"+type+"] "+JSON.stringify(params);
   var detail=params.task_name||params.name||params.question||params.action||"";
-  if(window.sendPrompt){try{sendPrompt(cmd);addLog(type,detail,"ok");showToast("Sent to Claude — executing in Asana...");return;}catch(e){}}
+  if(window.sendPrompt){try{sendPrompt(cmd);addLog(type,detail,"ok");showToast("Sent to ChatGPT — executing in Asana...");return;}catch(e){}}
   addLog(type,detail,"ok");
   var txt=document.getElementById("cptxt");if(txt)txt.value=cmd;
   document.getElementById("cpmodal").classList.add("on");
-  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(cmd).then(function(){showToast("Copied! Paste into Claude chat.");}).catch(function(){showToast("See command above — copy to Claude chat.");});}
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(cmd).then(function(){showToast("Copied! Paste into ChatGPT with the Asana connector.");}).catch(function(){showToast("See command above — copy to ChatGPT with the Asana connector.");});}
   else{if(txt){txt.select();try{document.execCommand("copy");showToast("Copied!");}catch(e){}}}
 }
 function closeCPModal(){document.getElementById("cpmodal").classList.remove("on");}
@@ -2201,12 +2251,12 @@ function copyShareLink(btn){
 function doShare(){
   var url=window.location.href||document.URL||'';
   var isFile=url.indexOf('file://')===0||url==='';
-  var isClaude=url.indexOf('claude.ai')>=0||url.indexOf('anthropic')>=0;
+  var isChatGPT=url.indexOf('chatgpt.com')>=0||url.indexOf('openai')>=0;
 
   // Build the share URL
   var shareUrl='';
-  if(isClaude){
-    // We're inside claude.ai — the conversation URL IS the share link
+  if(isChatGPT){
+    // We're inside chatgpt.com — the conversation URL IS the share link
     shareUrl=url;
   } else if(!isFile){
     // Hosted somewhere — use that URL
@@ -2225,7 +2275,7 @@ function doShare(){
       setTimeout(function(){b.innerHTML=orig;b.style.cssText=b.style.cssText.replace(/color:[^;]+!important;background:[^;]+!important;border-color:[^;]+!important;/,'');},2500);
     }
     if(navigator.clipboard&&navigator.clipboard.writeText){
-      navigator.clipboard.writeText(shareUrl).then(flash).catch(function(){showShareModal(shareUrl,isFile,isClaude);});
+      navigator.clipboard.writeText(shareUrl).then(flash).catch(function(){showShareModal(shareUrl,isFile,isChatGPT);});
       return;
     }
     var ta=document.createElement('textarea');
@@ -2235,10 +2285,10 @@ function doShare(){
     document.body.removeChild(ta);
     if(ok){flash();return;}
   }
-  showShareModal(shareUrl,isFile,isClaude);
+  showShareModal(shareUrl,isFile,isChatGPT);
 }
 
-function showShareModal(shareUrl,isFile,isClaude){
+function showShareModal(shareUrl,isFile,isChatGPT){
   var old=document.getElementById('share-modal');if(old)old.remove();
   var modal=document.createElement('div');
   modal.id='share-modal';
@@ -2262,8 +2312,8 @@ function showShareModal(shareUrl,isFile,isClaude){
       '<div style="font-size:12px;font-weight:600;color:#1e293b;margin-bottom:4px">Option 1 — Upload to Google Drive</div>'+
       '<div style="font-size:11px;color:#64748b">Upload the .html file to Google Drive &rarr; right-click &rarr; Share &rarr; copy link. Recipients open it directly in their browser.</div></div>'+
       '<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:9px;padding:12px 14px">'+
-      '<div style="font-size:12px;font-weight:600;color:#1e293b;margin-bottom:4px">Option 2 — Open in Claude.ai</div>'+
-      '<div style="font-size:11px;color:#64748b">Drag the file into a Claude.ai conversation and ask Claude to render it. The conversation link is then shareable.</div></div>'+
+      '<div style="font-size:12px;font-weight:600;color:#1e293b;margin-bottom:4px">Option 2 — Open in ChatGPT</div>'+
+      '<div style="font-size:11px;color:#64748b">Drag the file into a ChatGPT conversation and ask ChatGPT to review it. The conversation link is then shareable.</div></div>'+
       '<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:9px;padding:12px 14px">'+
       '<div style="font-size:12px;font-weight:600;color:#1e293b;margin-bottom:4px">Option 3 — Copy file path</div>'+
       '<div style="font-size:11px;color:#64748b">Send the .html file directly — anyone can open it in their browser with no internet required (charts need one CDN load).</div></div>'+
@@ -2289,16 +2339,105 @@ var ASK_SUGG={
   pmo:["Which portfolio is At Risk?","What overdue tasks need attention today?","Which project is behind schedule?","Where are the resource gaps?"],
   mkt:["Which campaign has the best ROI?","Where should I reallocate Q4 budget?","What is at risk this quarter?","Which campaigns are below lead target?"]
 };
-function sendAskQ(q){
-  if(!q||!q.trim())return;
-  // If running inside Claude (sendPrompt available), route there directly
-  if(window.sendPrompt){
-    try{sendPrompt(q);toggleAsk();return;}catch(e){}
+var _aiConversation=[];
+
+function compactAITask(task){
+  return {
+    gid:task.gid,
+    name:task.name,
+    assignee:task.assignee?task.assignee.name:null,
+    dueAt:task.dueAt,
+    completed:task.completed,
+    section:task.section?task.section.name:null,
+    incompleteDependencies:(task.dependencies||[]).filter(function(dep){return !dep.completed;}).map(function(dep){return dep.name;})
+  };
+}
+
+function compactAIProject(project){
+  var m=project.metrics||{};
+  return {
+    gid:project.gid,
+    name:project.name,
+    portfolio:project.portfolioName,
+    owner:project.owner?project.owner.name:null,
+    declaredHealth:project.health,
+    latestStatus:project.currentStatus?{
+      title:project.currentStatus.title,
+      text:project.currentStatus.text,
+      createdAt:project.currentStatus.createdAt,
+      author:project.currentStatus.authorName
+    }:null,
+    counts:m.counts||null,
+    completionRate:m.completionRate,
+    onTimeCompletion:m.onTimeCompletion,
+    weeklyVelocity:m.weeklyVelocity,
+    averageLeadTimeDays:m.averageLeadTimeDays,
+    averageCycleTimeDays:m.averageCycleTimeDays,
+    overdueAging:m.overdueAging,
+    milestoneAdherence:m.milestoneAdherence,
+    forecast:m.forecast,
+    risk:m.risk,
+    nextBestAction:m.nextBestAction,
+    workload:(m.workload||[]).slice(0,8),
+    bottlenecks:(m.bottlenecks||[]).slice(0,8),
+    overdueTasks:(m.overdueTasks||[]).slice(0,8).map(compactAITask),
+    blockedTasks:(m.blockedTasks||[]).slice(0,8).map(compactAITask)
+  };
+}
+
+function buildChatGPTContext(){
+  if(DATA_MODE==="live"&&REPORTING){
+    var projects=[];
+    (REPORTING.portfolios||[]).forEach(function(portfolio){
+      (portfolio.projects||[]).forEach(function(project){projects.push(compactAIProject(project));});
+    });
+    return {
+      source:"Asana live reporting model",
+      asOf:REPORTING.metadata&&REPORTING.metadata.fetchedAt,
+      currentView:curMain,
+      selectedPortfolio:selPort?{gid:selPort.gid,name:selPort.name}:null,
+      selectedProject:selProj?{gid:selProj.gid,name:selProj.name}:null,
+      metricDefinitions:{
+        riskScore:"0–100 deterministic score: overdue ratio 50%, blocked ratio 30%, forecast slip up to 20%",
+        forecast:"remaining scope divided by trailing four-week throughput; directional, not a commitment",
+        workload:"open task distribution; not capacity utilization without effort and capacity inputs"
+      },
+      aggregate:REPORTING.aggregate,
+      projects:projects,
+      dataQuality:REPORTING.dataQuality
+    };
   }
-  // Otherwise: answer locally using dashboard data
-  var answer=localAnswer(q);
-  showAnswerModal(q,answer);
+  return {
+    source:curMain==="mkt"?"Illustrative marketing scenario — not live Asana data":"Dashboard data unavailable",
+    asOf:new Date().toISOString(),
+    currentView:curMain,
+    campaigns:curMain==="mkt"?(C||[]).map(function(c){
+      return {name:c.name,status:c.status,quarter:c.q,region:c.region,budget:c.budget,spend:c.spend,pipeline:c.pipe,roi:c.roi,actualLeads:c.aL,targetLeads:c.tL};
+    }):[],
+    limitation:"Operational portfolio questions require a successful /api/reporting response."
+  };
+}
+
+async function sendAskQ(q){
+  if(!q||!q.trim())return;
   toggleAsk();
+  showAnswerModal(q,'<div style="display:flex;align-items:center;gap:10px"><div class="ai-spinner" style="display:block"></div><span>ChatGPT is analysing the current reporting payload…</span></div>');
+  try{
+    var text=await callChatGPT(q,null,1800,"chat",buildChatGPTContext(),_aiConversation);
+    _aiConversation.push({role:"user",content:q},{role:"assistant",content:text});
+    _aiConversation=_aiConversation.slice(-8);
+    var answer=document.getElementById("ask-answer-content");
+    if(answer)answer.innerHTML=formatChatGPTAnswer(text);
+  }catch(error){
+    var target=document.getElementById("ask-answer-content");
+    if(target)target.innerHTML='<div style="padding:10px 12px;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;color:#991b1b"><strong>ChatGPT is unavailable.</strong><br>'+esc(error.message)+'</div>';
+  }
+}
+
+function formatChatGPTAnswer(text){
+  return '<div style="white-space:pre-wrap">'+esc(text)
+    .replace(/\*\*([^*]+)\*\*/g,'<strong>$1</strong>')
+    .replace(/`([^`]+)`/g,'<code>$1</code>')+'</div>';
 }
 
 // ── Local intelligence engine ───────────────────────────────────────
@@ -2433,13 +2572,13 @@ function localAnswer(q){
       'By portfolio:<ul style="margin:8px 0 0 16px;line-height:2">'+P.map(function(p){var pt=p.projects.reduce(function(a,pr){return a.concat(pr.tasks||[]);},[ ]);var s=sc(pt);return '<li><strong>'+esc(p.name)+'</strong> — '+s.cp+'% ('+s.done+'/'+s.N+')</li>';}).join('')+'</ul>';
   }
 
-  // Default: show a formatted prompt to paste into Claude
+  // Default: show a formatted prompt to paste into ChatGPT
   var promptPipe=C.filter(function(c){return c.pipe;}).reduce(function(sum,c){return sum+c.pipe;},0);
   var promptROI=C.filter(function(c){return c.roi!=null;});
   var promptAvgROI=promptROI.length?(promptROI.reduce(function(sum,c){return sum+c.roi;},0)/promptROI.length).toFixed(2):"n/a";
   var promptContext="Looking at my altudo.co marketing portfolio ("+C.length+" "+(qFilter==="all"?"FY2026 campaigns":qFilter+" campaigns")+", "+$m(promptPipe)+" total pipeline, "+promptAvgROI+"x avg ROI): ";
   return '💬 <strong>I don\'t have a built-in answer for that question.</strong><br><br>'+
-    'Here\'s a ready-to-paste prompt for Claude:<br><br>'+
+    'Here\'s a ready-to-paste prompt for ChatGPT:<br><br>'+
     '<div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px;font-size:11px;font-family:monospace;line-height:1.6;color:#374151">'+
     esc(promptContext+q)+'</div>'+
     '<button onclick="copyLocalAnswer(this)" data-text="'+esc(promptContext+q)+'" style="margin-top:8px;font-size:11px;padding:5px 12px;border-radius:7px;background:#1e293b;color:#fff;border:none;cursor:pointer">Copy prompt</button>';
@@ -2464,7 +2603,7 @@ function showAnswerModal(question,answer){
     '<button onclick="document.getElementById(\'ask-answer-modal\').remove()" style="border:none;background:rgba(255,255,255,.2);color:#fff;border-radius:6px;width:24px;height:24px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center">&times;</button></div>'+
     '<div style="padding:16px 20px;border-bottom:1px solid #f1f5f9"><div style="font-size:10px;color:#94a3b8;text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">Your question</div>'+
     '<div style="font-size:13px;color:#1e293b;font-weight:500">'+esc(question)+'</div></div>'+
-    '<div style="padding:16px 20px;overflow-y:auto;flex:1;font-size:12px;color:#374151;line-height:1.7">'+answer+'</div>'+
+    '<div id="ask-answer-content" style="padding:16px 20px;overflow-y:auto;flex:1;font-size:12px;color:#374151;line-height:1.7">'+answer+'</div>'+
     '<div style="padding:12px 20px;border-top:1px solid #f1f5f9;display:flex;justify-content:flex-end">'+
     '<button onclick="document.getElementById(\'ask-answer-modal\').remove()" style="font-size:12px;padding:7px 16px;border-radius:8px;background:#1e293b;color:#fff;border:none;cursor:pointer;font-weight:600">Close</button></div>'+
     '</div>';
@@ -2601,13 +2740,14 @@ function goPMOProj(gid){
 }
 // localStorage persistence
 function saveState(){
-  try{localStorage.setItem("ad_main",curMain);localStorage.setItem("ad_mkt",mktSec);localStorage.setItem("ad_pmo",pmoView);localStorage.setItem("ad_portGid",selPort?selPort.gid:"");localStorage.setItem("ad_projGid",selProj?selProj.gid:"");}catch(e){}
+  try{localStorage.setItem("ad_main",curMain);localStorage.setItem("ad_mkt",mktSec);localStorage.setItem("ad_pmo",pmoView);localStorage.setItem("ad_dept",dPortSec);localStorage.setItem("ad_portGid",selPort?selPort.gid:"");localStorage.setItem("ad_projGid",selProj?selProj.gid:"");}catch(e){}
 }
 function loadState(){
   try{
     var m=localStorage.getItem("ad_main");if(m)curMain=m;
     var ms=localStorage.getItem("ad_mkt");if(ms)mktSec=ms;
     var pv=localStorage.getItem("ad_pmo");if(pv)pmoView=pv;
+    var ds=localStorage.getItem("ad_dept");if(ds)dPortSec=ds;
     var pg=localStorage.getItem("ad_portGid");if(pg)selPort=P.find(function(p){return p.gid===pg;})||null;
     var prg=localStorage.getItem("ad_projGid");
     if(prg){P.forEach(function(p){p.projects.forEach(function(r){if(r.gid===prg){selProj=r;selPPort=p;}});});}
@@ -2621,12 +2761,12 @@ function maybeShowTip(){
   var t=document.createElement("div");t.className="ftip";
   t.innerHTML='<span class="ftip-close" onclick="dismissTip(this.parentNode)">✕</span>'+
     '<strong>Tip: Action buttons</strong><br>Clicking task actions generates an Asana command. '+
-    'In Claude chat it executes instantly. When opened as a standalone file, the command is copied to your clipboard — paste it into Claude to run.';
+    'In ChatGPT with the Asana connector it executes instantly. When opened as a standalone file, the command is copied to your clipboard — paste it into ChatGPT to run.';
   document.body.appendChild(t);
   setTimeout(function(){if(t.parentNode)t.parentNode.removeChild(t);},12000);
 }
 function dismissTip(el){try{localStorage.setItem("ad_ftip","1");}catch(e){}if(el&&el.parentNode)el.parentNode.removeChild(el);}
-// Enhanced context-aware Ask Claude
+// Enhanced context-aware Ask ChatGPT
 var ASK_SUGG={
   pmo:["Which portfolio is at risk?","What overdue tasks need attention today?","Which project is behind schedule?","Where are the resource gaps?"],
   marketing:["Which campaign has the best ROI?","Where should I reallocate Q4 budget?","What is at risk this quarter?","Which campaigns are below lead target?"]
@@ -3223,7 +3363,7 @@ var DPORT = {
     gid:"1214598384580641",name:"Project Management",color:"#0891b2",
     totalBudget:0,totalSpent:0,
     kpis:[
-      {l:"Active projects",v:"1",c:"#fcd34d",s:"Claude x MCP Demo"},
+      {l:"Active projects",v:"1",c:"#fcd34d",s:"ChatGPT x MCP Demo"},
       {l:"Tasks total",    v:"14", c:"#818cf8",s:"across 1 project"},
       {l:"Completed",      v:"3",  c:"#4ade80",s:"21% done"},
       {l:"Overdue",        v:"5",  c:"#f87171",s:"action needed"},
@@ -3231,7 +3371,7 @@ var DPORT = {
       {l:"Health score",   v:"~58",c:"#f87171",s:"off track — 58/100"}
     ],
     projects:[
-      {gid:"1214100169970896",name:"Claude x Asana MCP — PM Demo",status:"yellow",cat:"Technology",priority:"high",budget:null,spent:null,tasks:{total:14,done:3,overdue:5},roi:null,savings:null,note:"At risk — 5 overdue tasks, delivery May 2. End-to-end testing and final rehearsal pending.",metrics:[{l:"Tasks done",v:"3/14"},{l:"Overdue",v:"5 tasks"},{l:"Owner",v:"Damola E."},{l:"Deadline",v:"May 2"}]}
+      {gid:"1214100169970896",name:"ChatGPT x Asana MCP — PM Demo",status:"yellow",cat:"Technology",priority:"high",budget:null,spent:null,tasks:{total:14,done:3,overdue:5},roi:null,savings:null,note:"At risk — 5 overdue tasks, delivery May 2. End-to-end testing and final rehearsal pending.",metrics:[{l:"Tasks done",v:"3/14"},{l:"Overdue",v:"5 tasks"},{l:"Owner",v:"Damola E."},{l:"Deadline",v:"May 2"}]}
     ]
   }
 };
@@ -3311,7 +3451,7 @@ function departmentProjectFromLive(project){
 function syncDepartmentPortfoliosFromLive(portfolios){
   if(!portfolios||!portfolios.length)return;
   var live={};
-  DPORT_ORDER=portfolios.map(function(portfolio,index){
+  var departmentOrder=portfolios.map(function(portfolio,index){
     var key="portfolio_"+String(portfolio.gid||index).replace(/[^a-zA-Z0-9_-]/g,"");
     live[key]={
       gid:portfolio.gid,
@@ -3328,12 +3468,33 @@ function syncDepartmentPortfoliosFromLive(portfolios){
       icon:["&#9881;","&#128200;","&#128176;","&#128193;"][index%4]
     };
   });
+  var seen={};
+  var allProjects=[];
+  departmentOrder.forEach(function(config){
+    (live[config.key].projects||[]).forEach(function(project){
+      var identity=project.gid||config.key+"_"+project.name;
+      if(seen[identity])return;
+      seen[identity]=true;
+      allProjects.push(project);
+    });
+  });
+  live.general={
+    gid:"general",
+    name:"General",
+    color:"#1abb9c",
+    totalBudget:0,
+    totalSpent:0,
+    kpis:[],
+    projects:allProjects
+  };
+  DPORT_ORDER=[{key:"general",label:"General",icon:"&#9638;"}].concat(departmentOrder);
   DPORT=live;
-  if(!DPORT[dPortSec])dPortSec=DPORT_ORDER[0].key;
+  if(!DPORT[dPortSec])dPortSec="general";
+  renderDepartmentMenu();
 }
 
 // Per-portfolio section navigation state
-var dPortSec = "engineering";   // which portfolio sidebar is active
+var dPortSec = "general";   // General aggregates every live department portfolio
 var dSubSections={};
 
 function getDeptSubSec(port){
@@ -3346,8 +3507,29 @@ function setDeptSubSec(port,sec){
 // ── Sidebar switch ────────────────────────────────────────────────────
 function switchDeptPort(port,btn){
   dPortSec=port;
+  var select=document.getElementById("department-select");
+  if(select)select.value=port;
   renderDept();
   setTimeout(function(){buildDeptCharts(port);flushCharts();},80);
+}
+
+function selectDepartment(port){
+  if(!DPORT[port])port="general";
+  switchDeptPort(port);
+}
+
+function renderDepartmentMenu(){
+  var select=document.getElementById("department-select");
+  if(!select)return;
+  select.innerHTML=DPORT_ORDER.map(function(config){
+    var port=DPORT[config.key];
+    var count=port&&port.projects?port.projects.length:0;
+    var label=config.key==="general"
+      ?"General — all departments ("+count+")"
+      :config.label+" ("+count+")";
+    return '<option value="'+esc(config.key)+'">'+esc(label)+'</option>';
+  }).join("");
+  select.value=DPORT[dPortSec]?dPortSec:"general";
 }
 
 // ── Sub-section switch ────────────────────────────────────────────────
@@ -3368,26 +3550,21 @@ function dPriCol(p){return{critical:"#dc2626",high:"#f59e0b",medium:"#4f46e5",lo
 // ══════════════════════════════════════════════════════════════════════
 function renderDept(){
   var el=document.getElementById("pg-dept");if(!el)return;
+  if(DATA_MODE==="loading"){
+    el.innerHTML='<div class="card" role="status" aria-live="polite" style="min-height:260px;display:grid;place-items:center;text-align:center">'+
+      '<div><div class="ai-spinner" style="display:inline-block;width:28px;height:28px;border-color:var(--border);border-top-color:var(--primary);margin-bottom:12px"></div>'+
+      '<div class="h-page">Loading department reporting</div>'+
+      '<div class="t-caption" style="margin-top:5px">Building the General view and department options from live Asana portfolios…</div></div></div>';
+    return;
+  }
+  if(DATA_MODE==="error"){
+    el.innerHTML='<div class="card" role="alert" style="max-width:720px;margin:40px auto;border-left:4px solid var(--danger)">'+
+      '<div class="h-page">Department reporting is unavailable</div>'+
+      '<div class="t-body" style="margin:8px 0 14px">'+esc(DATA_ERROR||"The reporting endpoint did not return data.")+'</div>'+
+      '<button class="bar-btn" onclick="loadLiveReporting(true)" style="color:var(--primary);border-color:var(--primary)">Retry connection</button></div>';
+    return;
+  }
   var ports=DPORT_ORDER;
-
-  // Build sidebar
-  var sidebar='<div class="dept-sidebar">';
-  sidebar+='<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text4,#94a3b8);padding:0 12px 10px;margin-top:4px">Departments</div>';
-  ports.forEach(function(p){
-    var port=DPORT[p.key];
-    var cnt=port?port.projects.length:0;
-    var col=port?port.color:"#94a3b8";
-    var on=dPortSec===p.key;
-    sidebar+='<button class="dport-btn'+(on?" on":"")+'\" id="dpb-'+p.key+'" aria-pressed="'+on+'" onclick="switchDeptPort(\''+p.key+'\',this)">'+
-      '<span class="dport-ico" style="background:'+(on?"rgba(255,255,255,.2)":col+'18"')+';color:'+(on?"#fff":col)+';">'+p.icon+'</span>'+
-      '<div class="dport-labels">'+
-        '<span class="dport-name">'+p.label+'</span>'+
-        '<span class="dport-cnt">'+cnt+' project'+(cnt!==1?"s":"")+'</span>'+
-      '</div>'+
-      (on?'<svg width="6" height="10" viewBox="0 0 6 10" fill="none"><path d="M1 1l4 4-4 4" stroke="rgba(255,255,255,.7)" stroke-width="1.5" stroke-linecap="round"/></svg>':'')+
-    '</button>';
-  });
-  sidebar+='</div>';
 
   // Render only the active portfolio. Inactive portfolios are rebuilt on
   // selection instead of leaving their charts and report panels hidden.
@@ -3396,7 +3573,8 @@ function renderDept(){
   var views=activeConfig?
     '<div class="dport-view on" id="dv-'+activeConfig.key+'">'+renderPortView(activeConfig.key,activePort,activeConfig)+'</div>':"";
 
-  el.innerHTML='<div class="dept-layout">'+sidebar+'<div class="dept-content">'+views+'</div></div>';
+  el.innerHTML='<div class="dept-layout"><div class="dept-content">'+views+'</div></div>';
+  renderDepartmentMenu();
 }
 
 // ── Per-portfolio view ────────────────────────────────────────────────
@@ -3404,6 +3582,7 @@ function renderPortView(key,port,dConf){
   var projs=port.projects||[];
   var col=port.color||"#4f46e5";
   var subSec=getDeptSubSec(key);
+  var isGeneral=key==="general";
 
   // ── Section definitions (like marketing sidebar sections) ───────────
   var sections=[
@@ -3434,8 +3613,8 @@ function renderPortView(key,port,dConf){
 
   var hero='<div style="background:linear-gradient(135deg,#0f172a 0%,'+hexToDark(col)+' 100%);border-radius:16px;padding:20px 24px;margin-bottom:16px;position:relative;overflow:hidden;border:1px solid '+col+'22">'+
     '<div style="position:absolute;top:-30px;right:-30px;width:140px;height:140px;border-radius:50%;background:'+col+'18;pointer-events:none"></div>'+
-    '<div style="font-size:10px;color:#64748b;text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px">'+port.name+' Portfolio &middot; altudo.co</div>'+
-    '<div style="font-size:20px;font-weight:700;color:#f8fafc;margin-bottom:10px;letter-spacing:-.02em">'+port.name+' Department</div>'+
+    '<div style="font-size:10px;color:#aab4c3;text-transform:uppercase;letter-spacing:.1em;margin-bottom:3px">'+(isGeneral?"All live Asana portfolios":esc(port.name)+" Portfolio")+' &middot; altudo.co</div>'+
+    '<div style="font-size:20px;font-weight:700;color:#f8fafc;margin-bottom:10px;letter-spacing:-.02em">'+(isGeneral?"General Department Overview":esc(port.name)+" Department")+'</div>'+
     (projs.length===0?'<div style="font-size:12px;color:#475569">No projects added to this portfolio yet.</div>':
     '<div style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px">'+
       (port.kpis.length?port.kpis:buildAutoKpis(port,projs,onTrack,atRisk,offTrack,totalTasks,doneTasks,overdueTasks))
@@ -3475,9 +3654,11 @@ function buildAutoKpis(port,projs,onTrack,atRisk,offTrack,tt,done,ov){
 
 // ── OVERVIEW section ─────────────────────────────────────────────────
 function renderDeptOverview(key,port,projs,col){
-  var onTrack=projs.filter(function(p){return p.status==="green"||p.status==="complete";}).length;
+  var onTrack=projs.filter(function(p){return p.status==="green";}).length;
+  var complete=projs.filter(function(p){return p.status==="complete";}).length;
   var atRisk=projs.filter(function(p){return p.status==="yellow";}).length;
   var offTrack=projs.filter(function(p){return p.status==="red";}).length;
+  var noStatus=projs.filter(function(p){return p.status==="gray";}).length;
   var cats={};projs.forEach(function(p){cats[p.cat]=(cats[p.cat]||0)+1;});
   var catList=Object.keys(cats).sort(function(a,b){return cats[b]-cats[a];});
   var catCols=["#4f46e5","#0891b2","#10b981","#f59e0b","#ef4444","#8b5cf6"];
@@ -3486,7 +3667,7 @@ function renderDeptOverview(key,port,projs,col){
   var ovT=projs.reduce(function(a,p){return a+(p.tasks?p.tasks.overdue:0);},0);
 
   // ── Health donut insight (dynamic, computed from data) ──────────────
-  var healthPct=Math.round(onTrack/projs.length*100);
+  var healthPct=Math.round((onTrack+complete)/projs.length*100);
   var healthStatus=healthPct>=80?"strong":healthPct>=60?"mixed":"concerning";
   var worstProj=projs.slice().sort(function(a,b){
     var sv={green:3,complete:3,yellow:2,red:1};return (sv[a.status]||0)-(sv[b.status]||0);
@@ -3537,6 +3718,8 @@ function renderDeptOverview(key,port,projs,col){
       '<span><i style="background:#22c55e"></i>On Track ('+onTrack+')</span>'+
       '<span><i style="background:#f59e0b"></i>At Risk ('+atRisk+')</span>'+
       '<span><i style="background:#ef4444"></i>Off Track ('+offTrack+')</span>'+
+      '<span><i style="background:#6366f1"></i>Complete ('+complete+')</span>'+
+      '<span><i style="background:#94a3b8"></i>No status ('+noStatus+')</span>'+
     '</div>'+
     healthInsight+
     '</div>'+
@@ -3555,9 +3738,9 @@ function renderDeptOverview(key,port,projs,col){
   html+='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">'+
     [
       {l:"Overall completion",v:compPct+"%",c:col,s:doneT+" of "+totalT+" tasks done"},
-      {l:"Projects on schedule",v:Math.round(onTrack/projs.length*100)+"%",c:"#22c55e",s:onTrack+" of "+projs.length+" on track"},
+      {l:"Healthy or complete",v:Math.round((onTrack+complete)/projs.length*100)+"%",c:"#22c55e",s:(onTrack+complete)+" of "+projs.length+" projects"},
       {l:"Overdue tasks",v:ovT,c:ovT>5?"#ef4444":"#f59e0b",s:"across all projects"},
-      {l:"Portfolio health",v:Math.round((onTrack*100+atRisk*60+offTrack*30)/projs.length)+"/100",c:col,s:"composite score"}
+      {l:"Portfolio health",v:Math.round(((onTrack+complete)*100+atRisk*60+offTrack*30)/projs.length)+"/100",c:col,s:"composite score"}
     ].map(function(m){return '<div class="card" style="border-top:3px solid '+m.c+'">'+
       '<div style="font-size:9px;color:var(--text4,#94a3b8);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px">'+m.l+'</div>'+
       '<div style="font-size:22px;font-weight:700;color:'+m.c+'">'+m.v+'</div>'+
@@ -3605,6 +3788,12 @@ function renderDeptProjects(projs,col){
 // ── BUDGET section ───────────────────────────────────────────────────
 function renderDeptBudget(key,port,projs,col){
   var budgeted=projs.filter(function(p){return p.budget;});
+  if(!budgeted.length){
+    return '<div class="card" role="status" style="padding:28px;border-left:4px solid var(--warning)">'+
+      '<div class="ct" style="margin-bottom:6px">Budget charts need structured Asana data</div>'+
+      '<div class="t-body">No consistent numeric Budget and Actual Cost custom fields were found for this '+(key==="general"?"General view":"department")+'. The dashboard will not estimate financial values.</div>'+
+      '<div class="t-caption" style="margin-top:10px">Add shared workspace-level fields with the same field GIDs across projects to enable budget-versus-actual charts.</div></div>';
+  }
   var totalB=budgeted.reduce(function(a,p){return a+p.budget;},0);
   var totalS=budgeted.reduce(function(a,p){return a+(p.spent||0);},0);
   var savings=projs.filter(function(p){return p.savings;}).reduce(function(a,p){return a+p.savings;},0);
@@ -3765,7 +3954,7 @@ function renderDeptInsights(key, port, projs, col){
     // Header
     '<div style="margin-bottom:16px">' +
     '<div style="font-size:15px;font-weight:700;color:var(--text,#1a2332);margin-bottom:4px;letter-spacing:-.01em">&#129302; AI Portfolio Insights</div>' +
-    '<div style="font-size:12px;color:var(--text3,#64748b);margin-bottom:14px">Claude analyses your live Asana data and generates executive-level insights, risk flags, and strategic recommendations.</div>' +
+    '<div style="font-size:12px;color:var(--text3,#64748b);margin-bottom:14px">ChatGPT analyses your live Asana data and generates executive-level insights, risk flags, and strategic recommendations.</div>' +
     '</div>' +
 
     // Quick stats row (always shown, no API needed)
@@ -3786,7 +3975,7 @@ function renderDeptInsights(key, port, projs, col){
       '<div class="ai-spinner"></div>' +
       (cached ? '&#10004; Regenerate AI Insights' : '&#9889; Generate AI Insights') +
     '</button>' +
-    '<span style="font-size:10px;color:var(--text4,#94a3b8);margin-left:10px">Powered by Claude Sonnet 4</span>' +
+    '<span style="font-size:10px;color:var(--text4,#94a3b8);margin-left:10px">Powered by ChatGPT via OpenAI</span>' +
     cachedBlock +
     '</div>'
   );
@@ -3844,7 +4033,7 @@ async function generateInsights(key) {
       '"recommendations": array of 3 objects, each with "priority" (1/2/3), "action" (imperative, max 10 words), "rationale" (one sentence), "owner" ("Engineering Manager"/"CTO"/"Finance"/"PMO")\n' +
       '"budget_verdict": one sentence verdict on budget health\n' +
       '"forecast": one sentence on expected portfolio outcome if current trajectory continues\n\nPortfolio data:\n' + context;
-    var text = await callClaude(userPrompt, sysPrompt, 1200);
+    var text = await callChatGPT(userPrompt, sysPrompt, 3200, "insights", buildChatGPTContext(), []);
 
     // Parse JSON (strip any accidental markdown fences)
     text = text.replace(/```json\n?/g,'').replace(/```\n?/g,'').trim();
@@ -3857,7 +4046,7 @@ async function generateInsights(key) {
     btn.innerHTML = '<svg class="ai-btn-ico" width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M7.5 1L9.2 5.4H14L10.4 8.1L11.7 12.5L7.5 9.8L3.3 12.5L4.6 8.1L1 5.4H5.4L7.5 1Z" fill="rgba(255,255,255,.9)"/></svg> Regenerate AI Insights';
 
   } catch(e) {
-    resultEl.innerHTML = '<div class="ai-error"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#dc2626" stroke-width="1.4"/><path d="M8 5v3.5M8 10.5v.5" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/></svg><div><strong>Could not generate insights.</strong> ' + esc(e.message) + '<br><span style="font-size:11px;opacity:.8">This feature requires an internet connection and Claude API access.</span></div></div>';
+    resultEl.innerHTML = '<div class="ai-error"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#dc2626" stroke-width="1.4"/><path d="M8 5v3.5M8 10.5v.5" stroke="#dc2626" stroke-width="1.5" stroke-linecap="round"/></svg><div><strong>Could not generate insights.</strong> ' + esc(e.message) + '<br><span style="font-size:11px;opacity:.8">This feature requires an internet connection and OpenAI API access.</span></div></div>';
     resultEl.classList.add('show');
   }
 
@@ -3900,7 +4089,7 @@ function renderInsightHTML(ins, port, key) {
     '<div class="ai-result-hdr">' +
       '<svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 1.5L10.95 6.6H16.5L12.15 9.9L13.65 15L9 11.7L4.35 15L5.85 9.9L1.5 6.6H7.05L9 1.5Z" fill="rgba(255,255,255,.9)"/></svg>' +
       '<div class="ai-title">AI Portfolio Analysis — '+esc(port.name)+'</div>' +
-      '<div class="ai-stamp">Claude Sonnet 4 &middot; '+new Date().toLocaleDateString()+'</div>' +
+      '<div class="ai-stamp">ChatGPT via OpenAI &middot; '+new Date().toLocaleDateString()+'</div>' +
     '</div>' +
 
     '<div class="ai-result-body">' +
@@ -4016,9 +4205,9 @@ function buildDeptCharts(portKey){
 
   if(subSec==="overview"){
     // Health donut
-    var counts={green:0,yellow:0,red:0,complete:0};
+    var counts={green:0,yellow:0,red:0,complete:0,gray:0};
     projs.forEach(function(p){counts[p.status]=(counts[p.status]||0)+1;});
-    mk("dc-ov-health-"+portKey,{type:"doughnut",data:{labels:["On Track","At Risk","Off Track","Complete"],datasets:[{data:[counts.green,counts.yellow,counts.red,counts.complete],backgroundColor:["#10b981","#f59e0b","#ef4444","#6366f1"],borderWidth:3,borderColor:isDark?"#161b22":"#fff",hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,cutout:"65%",plugins:{legend:{position:"right",labels:{font:{size:10},color:tc,boxWidth:10,padding:8}},tooltip:Object.assign({},tt)}}});
+    mk("dc-ov-health-"+portKey,{type:"doughnut",data:{labels:["On Track","At Risk","Off Track","Complete","No status"],datasets:[{data:[counts.green,counts.yellow,counts.red,counts.complete,counts.gray],backgroundColor:["#10b981","#f59e0b","#ef4444","#6366f1","#94a3b8"],borderWidth:3,borderColor:isDark?"#161b22":"#fff",hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,cutout:"65%",plugins:{legend:{position:"right",labels:{font:{size:10},color:tc,boxWidth:10,padding:8}},tooltip:Object.assign({},tt)}}});
     // Category pie
     var cats={};projs.forEach(function(p){cats[p.cat]=(cats[p.cat]||0)+1;});
     var ck=Object.keys(cats);
@@ -4070,7 +4259,7 @@ function renderDeptImprovements(key, port, projs, col){
     '<div style="margin-bottom:18px">'+
       '<div style="font-size:15px;font-weight:700;color:var(--text,#1a2332);margin-bottom:4px;letter-spacing:-.01em">&#128161; AI-Suggested Improvements</div>'+
       '<div style="font-size:12px;color:var(--text3,#64748b);margin-bottom:16px">'+
-        'Claude analyses your portfolio data and generates specific, actionable improvements across process, resource, technology, financial, and governance dimensions. '+
+        'ChatGPT analyses your portfolio data and generates specific, actionable improvements across process, resource, technology, financial, and governance dimensions. '+
         'Each improvement includes implementation steps and measurable expected impact.'+
       '</div>'+
     '</div>'+
@@ -4083,7 +4272,7 @@ function renderDeptImprovements(key, port, projs, col){
 
     // AI generator
     '<div style="margin-bottom:12px;padding-top:16px;border-top:1px solid var(--border,#e8ecf0)">'+
-      '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3,#64748b);margin-bottom:10px">&#129302; Deep AI Analysis — Powered by Claude Sonnet 4</div>'+
+      '<div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3,#64748b);margin-bottom:10px">&#129302; Deep AI Analysis — Powered by ChatGPT via OpenAI</div>'+
       '<button class="impr-gen-btn'+(cached?" loaded":"")+'" id="impr-btn-'+key+'" onclick="generateImprovements(\''+key+'\')">'+
         '<span class="impr-btn-ico">&#128161;</span>'+
         '<div class="ai-spinner"></div>'+
@@ -4234,7 +4423,7 @@ async function generateImprovements(key) {
       '  "time_to_implement": e.g. "1 week", "2-4 weeks", "1 quarter"\n'+
       '"summary": one paragraph executive summary of the improvement opportunity\n'+
       '"priority_focus": the single most important improvement in 15 words max\n\nPortfolio data:\n' + prompt;
-    var rawText = await callClaude(imprUser, imprSys, 1800);
+    var rawText = await callChatGPT(imprUser, imprSys, 4200, "improvement", buildChatGPTContext(), []);
     var text = rawText.replace(/```json\n?/g,'').replace(/```\n?/g,'').trim();
     var parsed = JSON.parse(text);
 
@@ -4289,7 +4478,7 @@ function renderImprovementsResult(data, port, key){
   var html =
     // Summary banner
     '<div style="background:linear-gradient(135deg,#7c3aed,#4f46e5);border-radius:14px;padding:16px 20px;margin-bottom:16px;color:#fff">'+
-      '<div style="font-size:10px;opacity:.7;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">AI Improvement Plan &middot; Claude Sonnet 4 &middot; '+new Date().toLocaleDateString()+'</div>'+
+      '<div style="font-size:10px;opacity:.7;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">AI Improvement Plan &middot; ChatGPT via OpenAI &middot; '+new Date().toLocaleDateString()+'</div>'+
       '<div style="font-size:13px;font-weight:600;margin-bottom:6px">'+esc(data.summary||"")+'</div>'+
       '<div style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.15);padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600">'+
         '&#10024; Priority focus: '+esc(data.priority_focus||"")+
@@ -4365,15 +4554,19 @@ function createImprovementTask(title, rec, steps){
 }
 
 
-// ── AI Settings & API Key Management ──────────────────────────────────
-var AI_KEY_STORAGE = 'altudo_ai_key';
-var AI_PROXY_STORAGE = 'altudo_ai_proxy';
-var _aiKey = null;
-var _aiProxy = null;
+// ── AI Settings — server-managed OpenAI configuration ────────────────
+var _aiServerConfigured=false;
+var _aiModel="gpt-5.6";
 
-function initAIConfig(){
-  try{_aiKey=localStorage.getItem(AI_KEY_STORAGE)||null;}catch(e){}
-  try{_aiProxy=localStorage.getItem(AI_PROXY_STORAGE)||null;}catch(e){}
+async function initAIConfig(){
+  try{
+    var response=await fetch("/api/health",{cache:"no-store"});
+    var health=await response.json();
+    _aiServerConfigured=Boolean(health.openai_key);
+    _aiModel=health.openai_model||"gpt-5.6";
+  }catch(error){
+    _aiServerConfigured=false;
+  }
   updateAISettingsBtn();
 }
 
@@ -4382,15 +4575,15 @@ function updateAISettingsBtn(){
   var label=document.getElementById('ai-runtime-label');
   var dot=document.getElementById('ai-status-dot');
   if(!btn)return;
-  if(_aiKey||_aiProxy){
-    btn.innerHTML='<span style="color:#22c55e">&#9679;</span> AI Active';
+  if(_aiServerConfigured){
+    btn.innerHTML='<span style="color:#22c55e">&#9679;</span> ChatGPT Active';
     btn.style.borderColor='#86efac';
-    if(label)label.textContent='AI configured';
+    if(label)label.textContent='ChatGPT · '+_aiModel;
     if(dot){dot.style.background='var(--ai)';dot.style.opacity='1';}
   } else {
     btn.innerHTML='&#9881; AI Settings';
     btn.style.borderColor='';
-    if(label)label.textContent='AI not configured';
+    if(label)label.textContent='ChatGPT not configured';
     if(dot){dot.style.background='var(--text4)';dot.style.opacity='.7';}
   }
 }
@@ -4400,24 +4593,7 @@ function openAISettings(){
   if(!modal)return;
   modal._returnFocus=document.activeElement;
   modal.style.display='flex';
-  var keyInput=document.getElementById('ai-key-input');
-  var proxyInput=document.getElementById('ai-proxy-url');
-  if(keyInput&&_aiKey) keyInput.value=_aiKey;
-  if(proxyInput&&_aiProxy) proxyInput.value=_aiProxy;
   renderAIConfigStatus();
-  setTimeout(function(){if(keyInput)keyInput.focus();},0);
-}
-
-
-function clearAIKey(){
-  _aiKey=null; _aiProxy=null;
-  try{localStorage.removeItem(AI_KEY_STORAGE);localStorage.removeItem(AI_PROXY_STORAGE);}catch(e){}
-  var ki=document.getElementById('ai-key-input');
-  var pi=document.getElementById('ai-proxy-url');
-  if(ki)ki.value=''; if(pi)pi.value='';
-  updateAISettingsBtn();
-  renderAIConfigStatus();
-  showToast('AI configuration cleared');
 }
 function closeAISettings(){
   var modal=document.getElementById('ai-settings-modal');
@@ -4430,107 +4606,22 @@ function closeAISettings(){
 function renderAIConfigStatus(){
   var el=document.getElementById('ai-status-text');
   if(!el)return;
-  if(_aiProxy){
-    el.innerHTML='<span style="color:#0891b2;font-weight:700">&#10003; Proxy configured</span> &mdash; '+esc(_aiProxy)+'. All team members get AI features automatically.';
-  } else if(_aiKey){
-    var provider=detectProvider(_aiKey);
-    var isOAI=provider==='openai';
-    var masked=(isOAI?'sk-...':'sk-ant-...')+_aiKey.slice(-6);
-    var isHttps = window.location.protocol === 'https:';
-    var provLabel=isOAI
-      ? '<span style="background:#10a37f18;color:#10a37f;padding:1px 7px;border-radius:20px;font-size:10px;font-weight:700">OpenAI · GPT-4o</span>'
-      : '<span style="background:#4f46e518;color:#4f46e5;padding:1px 7px;border-radius:20px;font-size:10px;font-weight:700">Anthropic · Claude Sonnet 4</span>';
-    var oaiNote = (isOAI && !isHttps)
-      ? ' <span style="color:#f59e0b;font-size:10px">&#9888; Open via your Vercel URL for AI to work (OpenAI requires HTTPS)</span>'
-      : '';
-    el.innerHTML='<span style="color:#22c55e;font-weight:700">&#10003; Active</span> '+provLabel+
-      ' &mdash; Key ending in <code style="background:#f0fdf4;padding:1px 6px;border-radius:4px">'+masked+'</code>. '+
-      'Click <strong>Generate AI Insights</strong> or <strong>Generate Improvement Plan</strong> in any portfolio.'+oaiNote;
+  if(_aiServerConfigured){
+    el.innerHTML='<span style="color:#22c55e;font-weight:700">&#10003; Active</span> '+
+      '<span style="background:#10a37f18;color:#087f5b;padding:1px 7px;border-radius:20px;font-size:10px;font-weight:700">OpenAI · '+esc(_aiModel)+'</span>'+
+      ' &mdash; The API key is held by Vercel and never sent to the browser.';
   } else {
-    el.innerHTML='<span style="color:#ef4444;font-weight:700">&#9888; Not configured</span> &mdash; Add an Anthropic or OpenAI key below.';
+    el.innerHTML='<span style="color:#ef4444;font-weight:700">&#9888; Not configured</span> &mdash; Add <code>OPENAI_API_KEY</code> in Vercel and redeploy.';
   }
-}
-
-function checkKeyFormat(val){
-  var hint=document.getElementById('key-format-hint');
-  if(!hint)return;
-  if(!val){hint.textContent='';return;}
-  if(val.startsWith('sk-ant-')){
-    hint.innerHTML='<span style="color:#22c55e">&#10003; Valid Anthropic key format</span>';
-  } else {
-    hint.innerHTML='<span style="color:#f59e0b">&#9888; Keys typically start with sk-ant-</span>';
-  }
-}
-
-function saveAPIKey(){
-  var input=document.getElementById('ai-key-input');
-  if(!input||!input.value.trim()){showBanner('error','Please enter a valid API key');return;}
-  var key=input.value.trim();
-  if(!key.startsWith('sk-')){
-    showBanner('error','Key should start with sk-ant- (Anthropic) or sk- (OpenAI)');return;
-  }
-  var provider = detectProvider(key);
-  try{
-    localStorage.setItem(AI_KEY_STORAGE, key);
-    _aiKey=key; _aiProxy=null;
-    localStorage.removeItem(AI_PROXY_STORAGE);
-    updateAISettingsBtn();
-    renderAIConfigStatus();
-    showBanner('success', (provider==='openai'?'OpenAI key saved — using GPT-4o.':'Anthropic key saved — using Claude Sonnet 4.')+' AI features are now enabled.');
-  } catch(e){showBanner('error','Could not save key: '+e.message);}
-}
-
-function clearAPIKey(){
-  try{
-    localStorage.removeItem(AI_KEY_STORAGE);
-    localStorage.removeItem(AI_PROXY_STORAGE);
-    _aiKey=null; _aiProxy=null;
-    var ki=document.getElementById('ai-key-input');
-    var pi=document.getElementById('ai-proxy-url');
-    if(ki)ki.value='';if(pi)pi.value='';
-    updateAISettingsBtn();
-    renderAIConfigStatus();
-    showBanner('info','Configuration cleared. AI features disabled.');
-  }catch(e){}
-}
-
-function saveProxyURL(){
-  var input=document.getElementById('ai-proxy-url');
-  if(!input||!input.value.trim()){showBanner('error','Please enter your Vercel deployment URL');return;}
-  var url=input.value.trim().replace(/\/$/,'');
-  try{
-    localStorage.setItem(AI_PROXY_STORAGE,url);
-    _aiProxy=url; _aiKey=null;
-    localStorage.removeItem(AI_KEY_STORAGE);
-    updateAISettingsBtn();
-    renderAIConfigStatus();
-    showBanner('success','Proxy URL saved. Test the connection to verify.');
-  }catch(e){showBanner('error',e.message);}
-}
-
-async function testProxy(){
-  var input=document.getElementById('ai-proxy-url');
-  if(!input||!input.value.trim()){showBanner('error','Enter a proxy URL first');return;}
-  var url=input.value.trim().replace(/\/$/,'');
-  showBanner('info','Testing connection to '+url+'...');
-  try{
-    var res=await fetch(url+'/api/health',{method:'GET'});
-    if(res.ok){
-      var data=await res.json();
-      showBanner('success','Connection successful! '+JSON.stringify(data));
-    } else {
-      showBanner('error','Server responded with '+res.status+'. Check your Vercel deployment.');
-    }
-  }catch(e){showBanner('error','Could not connect: '+e.message+'. Check the URL and CORS settings.');}
 }
 
 async function testAIConnection(){
-  if(!_aiKey&&!_aiProxy){
-    showBanner('error','No configuration found. Add an API key or proxy URL first.');return;
-  }
-  showBanner('info','Sending test message to Claude...');
+  showBanner('info','Testing the server-side OpenAI connection...');
   try{
-    var result=await callClaude('Say "AI connection successful" and nothing else.');
+    var result=await callChatGPT('Verify the AI connection.',null,200,"test",{asOf:new Date().toISOString()},[]);
+    _aiServerConfigured=true;
+    updateAISettingsBtn();
+    renderAIConfigStatus();
     showBanner('success',result||'Connection successful!');
   }catch(e){showBanner('error','Connection failed: '+e.message);}
 }
@@ -4549,127 +4640,40 @@ function showBanner(type,msg){
   el.innerHTML='<span>'+s.icon+'</span><span>'+esc(msg)+'</span>';
 }
 
-// ── Central Claude caller — uses key or proxy ──────────────────────────
-// ── AI Provider detection ─────────────────────────────────────────────
-function detectProvider(key){
-  if(!key) return null;
-  if(key.startsWith('sk-ant-')) return 'anthropic';
-  if(key.startsWith('sk-')) return 'openai';
-  return 'anthropic'; // default
-}
-
-async function callClaude(userPrompt, systemPrompt, maxTokens){
-  systemPrompt = systemPrompt || 'You are a helpful portfolio analytics assistant for altudo.co.';
-  maxTokens = maxTokens || 1800;
-  var provider = _aiProxy ? 'proxy' : detectProvider(_aiKey);
-
-  var res;
-
-  if(provider === 'proxy'){
-    // Route through Vercel backend — works for any provider set server-side
-    res = await fetch(_aiProxy+'/api/ai', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-5-20251001',
-        max_tokens: maxTokens,
-        system: systemPrompt,
-        messages: [{role:'user', content: userPrompt}]
-      })
-    });
-
-  } else if(provider === 'anthropic'){
-    // Direct Anthropic API
-    res = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': _aiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-5-20251001',
-        max_tokens: maxTokens,
-        system: systemPrompt,
-        messages: [{role:'user', content: userPrompt}]
-      })
-    });
-
-  } else if(provider === 'openai'){
-    // OpenAI blocks direct browser calls unless on HTTPS with correct CORS headers.
-    // Strategy: prefer proxy → try direct HTTPS → fail clearly on file://
-    var isHttps = window.location.protocol === 'https:';
-    var isFile  = window.location.protocol === 'file:';
-    var autoProxy = isHttps ? (window.location.origin + '/api/ai') : null;
-    var proxyUrl = _aiProxy ? (_aiProxy + '/api/ai') : autoProxy;
-
-    if(proxyUrl){
-      // Route through proxy (works for both Vercel-hosted and custom proxy)
-      // Send provider + key so proxy can call OpenAI server-side
-      res = await fetch(proxyUrl, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-          provider: 'openai',
-          openai_key: _aiKey,
-          model: 'gpt-4o-mini',
-          max_tokens: maxTokens,
-          messages: [
-            {role: 'system', content: systemPrompt},
-            {role: 'user',   content: userPrompt}
-          ]
-        })
-      });
-    } else if(isFile){
-      // file:// + no proxy = CORS will block OpenAI. Give clear guidance.
-      throw new Error(
-        'OpenAI cannot be called directly from a local file. ' +
-        'Either: (1) open the dashboard from your Vercel URL where the proxy is available, ' +
-        'or (2) switch to an Anthropic key (sk-ant-...) which supports direct browser calls.'
-      );
-    } else {
-      // Fallback: try direct call (may work on some HTTPS deployments)
-      res = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + _aiKey
-        },
-        body: JSON.stringify({
-          model: 'gpt-4o-mini',
-          max_tokens: maxTokens,
-          messages: [
-            {role: 'system', content: systemPrompt},
-            {role: 'user',   content: userPrompt}
-          ]
-        })
-      });
-    }
-
-  } else {
-    throw new Error('No AI configuration. Click ⚙ AI Settings to add your API key (Anthropic or OpenAI).');
+// ── Central ChatGPT caller — server-side OpenAI Responses API ────────
+async function callChatGPT(userPrompt, systemPrompt, maxTokens, mode, context, history){
+  var endpoint=(window.location.protocol==="http:"||window.location.protocol==="https:")
+    ? window.location.origin+"/api/ai"
+    : null;
+  if(!endpoint){
+    throw new Error("ChatGPT requires the deployed Vercel dashboard. It cannot run from a local file.");
   }
+  var res=await fetch(endpoint,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      mode:mode||"chat",
+      question:userPrompt,
+      context:context||buildChatGPTContext(),
+      history:history||[],
+      maxOutputTokens:maxTokens||1800
+    })
+  });
 
   if(!res.ok){
     var errText = await res.text();
     var errJson = {};
     try{errJson = JSON.parse(errText);}catch(e){}
     var msg = errJson.error && errJson.error.message ? errJson.error.message : 'API error ' + res.status;
-    // Friendly message for common errors
-    if(res.status === 401) msg = 'Invalid API key. Check your key in ⚙ AI Settings.';
-    if(res.status === 429) msg = 'Rate limit reached. If using a free OpenAI account, try gpt-4o-mini (already set) or wait 60 seconds. Adding a billing method at platform.openai.com removes this limit.';
-    if(res.status === 402) msg = 'Billing issue — check your account at the provider dashboard.';
+    if(res.status === 401) msg = 'OpenAI rejected the server API key. Update OPENAI_API_KEY in Vercel and redeploy.';
+    if(res.status === 429) msg = 'The OpenAI rate or usage limit was reached. Review the project limits and try again shortly.';
+    if(res.status === 503) msg = 'ChatGPT is not configured. Add OPENAI_API_KEY in Vercel and redeploy.';
     throw new Error(msg);
   }
 
   var data = await res.json();
-
-  // Normalise response — Anthropic and OpenAI return text differently
-  if(data.content && data.content[0] && data.content[0].text) return data.content[0].text; // Anthropic
-  if(data.choices && data.choices[0] && data.choices[0].message) return data.choices[0].message.content; // OpenAI
-  if(data.text) return data.text; // proxy passthrough
-  return JSON.stringify(data);
+  if(!data.text)throw new Error("ChatGPT returned an empty response.");
+  return data.text;
 }
 
 function showDataIntegrityBanner(){
@@ -4912,6 +4916,8 @@ function setTab(id, skipRender){
     var el = document.getElementById(TAB_MAP[key].page);
     if(el) el.classList.toggle("on", key === id);
   });
+  var departmentNav=document.getElementById("department-nav");
+  if(departmentNav)departmentNav.classList.toggle("on",id==="dept");
   // Render unless told to skip
   if(!skipRender && TAB_MAP[id]) TAB_MAP[id].render();
   showDataIntegrityBanner();
