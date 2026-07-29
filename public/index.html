@@ -1209,7 +1209,7 @@ body.light .pill { border-radius: 10rem; }
     </button>
     <button class="tab" onclick="switchMain('dept',this)">
       <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M1 3h10M1 6h7M1 9h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-      Department View (Sample)
+      Department View
     </button>
   </div>
 
@@ -1975,11 +1975,11 @@ function localAnswer(q){
   var allT=allP.reduce(function(a,p){return a.concat((p.tasks||[]).map(function(t){return Object.assign({},t,{proj:p.name,port:p.portName});}));},[ ]);
   var liveRisk=null;
   if(DATA_MODE==="live"&&REPORTING){
-    if(curMain!=="pmo"){
+    if(curMain==="mkt"){
       banner.style.display="block";
       banner.style.cssText+=";padding:10px 13px;border:1px solid #c4b5fd;background:#f5f3ff;color:#5b21b6;border-radius:10px;font-size:11px";
-      banner.innerHTML="<strong>Sample scenario:</strong> this view uses illustrative marketing/department data and is not part of the live Asana PMO reporting model.";
-      if(label)label.textContent="Asana live · PMO only";
+      banner.innerHTML="<strong>Sample scenario:</strong> this Marketing view uses illustrative data and is not part of the live Asana reporting model.";
+      if(label)label.textContent="Asana live · Marketing sample";
       if(dot){dot.className="sb-dot green";dot.style.background="";}
       return;
     }
@@ -2915,21 +2915,99 @@ var DPORT = {
   }
 };
 
+// Replaced with the canonical reporting payload after /api/reporting loads.
+// The static object above remains only as an offline fallback.
+var DPORT_ORDER = [
+  {key:"engineering",label:"Engineering",icon:"&#9881;"},
+  {key:"sales",label:"Sales",icon:"&#128200;"},
+  {key:"finance",label:"Finance",icon:"&#128176;"},
+  {key:"pm",label:"Project Mgmt",icon:"&#128193;"}
+];
+
+function departmentFieldValue(project,names){
+  var wanted=names.map(function(name){return name.toLowerCase();});
+  var field=(project.customFields||[]).find(function(item){
+    return wanted.indexOf(String(item.fieldName||"").toLowerCase())>=0;
+  });
+  if(!field)return null;
+  if(field.enumValue&&field.enumValue.label)return field.enumValue.label;
+  if(field.multiEnumValues&&field.multiEnumValues.length)return field.multiEnumValues.map(function(item){return item.label;}).join(", ");
+  return field.displayValue||field.textValue||field.numberValue||null;
+}
+
+function departmentStatus(project){
+  var counts=project.liveMetrics&&project.liveMetrics.counts||{};
+  if(counts.total&&counts.complete===counts.total)return "complete";
+  return {on_track:"green",at_risk:"yellow",off_track:"red",unreported:"gray"}[project.declaredHealth]||"gray";
+}
+
+function departmentProjectFromLive(project){
+  var counts=project.liveMetrics&&project.liveMetrics.counts||{};
+  var risk=project.liveMetrics&&project.liveMetrics.risk||{};
+  var forecast=project.liveMetrics&&project.liveMetrics.forecast||{};
+  var owner=project.owner||"Unassigned";
+  var category=departmentFieldValue(project,["Category","Project Category","Workstream","Project Type"])||"Uncategorized";
+  var priority=String(departmentFieldValue(project,["Priority","Project Priority"])||"unreported").toLowerCase();
+  var statusText=project.currentStatus&&project.currentStatus.text;
+  return {
+    gid:project.gid,
+    name:project.name,
+    status:departmentStatus(project),
+    cat:category,
+    priority:priority,
+    budget:null,
+    spent:null,
+    roi:null,
+    savings:null,
+    tasks:{
+      total:counts.total||0,
+      done:counts.complete||0,
+      overdue:counts.overdue||0
+    },
+    note:statusText||risk.driver||"No Asana project status narrative is available.",
+    phase:project.currentStatus&&project.currentStatus.title||"",
+    metrics:[
+      {l:"Owner",v:owner},
+      {l:"Blocked",v:String(counts.blocked||0)},
+      {l:"Unassigned",v:String(counts.unassigned||0)},
+      {l:"Forecast",v:forecast.forecastDate||"Not computable"}
+    ]
+  };
+}
+
+function syncDepartmentPortfoliosFromLive(portfolios){
+  if(!portfolios||!portfolios.length)return;
+  var live={};
+  DPORT_ORDER=portfolios.map(function(portfolio,index){
+    var key="portfolio_"+String(portfolio.gid||index).replace(/[^a-zA-Z0-9_-]/g,"");
+    live[key]={
+      gid:portfolio.gid,
+      name:portfolio.name,
+      color:portfolio.color||["#4f46e5","#16a34a","#d97706","#0891b2"][index%4],
+      totalBudget:0,
+      totalSpent:0,
+      kpis:[],
+      projects:(portfolio.projects||[]).map(departmentProjectFromLive)
+    };
+    return {
+      key:key,
+      label:portfolio.name,
+      icon:["&#9881;","&#128200;","&#128176;","&#128193;"][index%4]
+    };
+  });
+  DPORT=live;
+  if(!DPORT[dPortSec])dPortSec=DPORT_ORDER[0].key;
+}
+
 // Per-portfolio section navigation state
 var dPortSec = "engineering";   // which portfolio sidebar is active
-var dEngSec  = "overview";      // engineering sub-section
-var dSalSec  = "overview";
-var dFinSec  = "overview";
-var dPmSec   = "overview";
+var dSubSections={};
 
 function getDeptSubSec(port){
-  return {engineering:dEngSec,sales:dSalSec,finance:dFinSec,pm:dPmSec}[port]||"overview";
+  return dSubSections[port]||"overview";
 }
 function setDeptSubSec(port,sec){
-  if(port==="engineering")dEngSec=sec;
-  else if(port==="sales")dSalSec=sec;
-  else if(port==="finance")dFinSec=sec;
-  else if(port==="pm")dPmSec=sec;
+  dSubSections[port]=sec;
 }
 
 // ── Sidebar switch ────────────────────────────────────────────────────
@@ -2956,7 +3034,7 @@ function switchDeptSec(port,sec,btn){
 
 // ── Color helpers ─────────────────────────────────────────────────────
 function dStCol(s){return{green:"#22c55e",yellow:"#f59e0b",red:"#ef4444",complete:"#6366f1"}[s]||"#94a3b8";}
-function dStLbl(s){return{green:"On Track",yellow:"At Risk",red:"Off Track",complete:"Complete"}[s]||"—";}
+function dStLbl(s){return{green:"On Track",yellow:"At Risk",red:"Off Track",complete:"Complete",gray:"No status"}[s]||"—";}
 function dStBg(s){return{green:"rgba(34,197,94,.12)",yellow:"rgba(245,158,11,.12)",red:"rgba(239,68,68,.12)",complete:"rgba(99,102,241,.12)"}[s]||"rgba(148,163,184,.1)";}
 function dPriCol(p){return{critical:"#dc2626",high:"#f59e0b",medium:"#4f46e5",low:"#22c55e"}[p]||"#64748b";}
 
@@ -2965,12 +3043,7 @@ function dPriCol(p){return{critical:"#dc2626",high:"#f59e0b",medium:"#4f46e5",lo
 // ══════════════════════════════════════════════════════════════════════
 function renderDept(){
   var el=document.getElementById("pg-dept");if(!el)return;
-  var ports=[
-    {key:"engineering",label:"Engineering",icon:"&#9881;"},
-    {key:"sales",      label:"Sales",      icon:"&#128200;"},
-    {key:"finance",    label:"Finance",    icon:"&#128176;"},
-    {key:"pm",         label:"Project Mgmt",icon:"&#128193;"}
-  ];
+  var ports=DPORT_ORDER;
 
   // Build sidebar
   var sidebar='<div class="dept-sidebar">';
@@ -4392,6 +4465,7 @@ function applyReportingModel(model){
       })
     };
   });
+  syncDepartmentPortfoliosFromLive(P);
   var velocity=model.aggregate.throughput||[];
   PORT_VELOCITY={
     weeks:velocity.map(function(bucket){return bucket.end.slice(5);}),

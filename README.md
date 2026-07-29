@@ -62,9 +62,15 @@ Go to vercel.com/new → Import this repo → Deploy
 ASANA_PAT              = your_asana_personal_access_token
 ASANA_WORKSPACE_GID    = 1115662927527527
 ASANA_PORTFOLIO_GIDS   = optional,comma-separated,portfolio-gids
+ASANA_DEPARTMENT_PORTFOLIO_GIDS = optional,comma-separated,department-portfolio-gids
 ASANA_PORTFOLIO_OWNER_GID = optional owner GID; defaults to me
 ANTHROPIC_API_KEY      = sk-ant-your_key_here   (optional — enables AI features server-side)
 ```
+
+The Department view is populated from the same canonical live reporting payload
+as the PMO view. `ASANA_DEPARTMENT_PORTFOLIO_GIDS` is merged with
+`ASANA_PORTFOLIO_GIDS`; it defaults to the configured Altudo department
+portfolio (`1213303616045074`) for this deployment.
 
 ### 4. Redeploy
 ```bash
