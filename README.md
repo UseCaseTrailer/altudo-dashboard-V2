@@ -4,10 +4,12 @@ Live Asana data · AI Insights & Improvements · Vercel serverless · Dark/Light
 
 ## Interface
 
-The dashboard uses an AdminLTE-inspired application shell with a dark navigation
-rail, light operations workspace, responsive navigation, status indicators, and
-enterprise-style cards and tables. The implementation is custom CSS and retains
-the existing Asana, MCP, AI, sharing, refresh, and theme-switching behavior.
+The dashboard uses a Gentelella v4-inspired application shell with a dark
+navigation rail, teal reporting accents, a light operations workspace,
+responsive navigation, status indicators, and enterprise-style cards and
+tables. The implementation adapts Gentelella's MIT-licensed design tokens and
+shell patterns while retaining the existing Asana, MCP, AI, sharing, refresh,
+and theme-switching behavior. See `THIRD_PARTY_NOTICES.md`.
 
 ## Reporting QA improvements
 
@@ -41,9 +43,26 @@ or additional fields—baseline burndown, health trends, scope creep,
 stage-to-stage cycle time, and capacity utilization—are explicitly reported as
 unavailable until the required data exists.
 
-The Marketing and Department views remain sample scenarios. They are not part of
-the live PMO reporting source and should not be used as current operational
-reports.
+The Department view is generated from the same canonical live portfolio payload
+as PMO. The Marketing view remains an explicitly labelled sample scenario and
+must not be interpreted as live Asana reporting.
+
+## UI QA fixes
+
+- Dynamic Department portfolio and section controls now show exactly one
+  selected panel.
+- Portfolio and section controls expose their selected state to assistive
+  technology.
+- Refresh preserves the current top-level dashboard view.
+- PMO shows a live loading or error state instead of briefly painting stale
+  sample totals.
+- Marketing quarter and date filters recalculate the full filtered view from a
+  single campaign set, including KPI totals and chart periods.
+- Empty marketing date ranges show an explicit no-results state.
+- Project cards separate Asana-declared status from calculated execution score.
+- Health distribution includes projects whose Asana status is missing.
+- Long project-status narratives are summarized with an optional expandable
+  detail view.
 
 ## Setup in 5 minutes
 

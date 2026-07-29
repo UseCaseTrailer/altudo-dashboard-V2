@@ -6,7 +6,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Altudo MCP Operations Dashboard</title>
+<title>Altudo Portfolio Intelligence Dashboard</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
@@ -610,8 +610,8 @@ body.light #bar { box-shadow: 0 1px 0 var(--border); }
 }
 .dept-content { flex: 1; min-width: 0; }
 .dport-view { display: none; } .dport-view.on { display: block; }
-.dss-engineering,.dss-sales,.dss-finance,.dss-pm { display: none; }
-.dss-engineering.on,.dss-sales.on,.dss-finance.on,.dss-pm.on { display: block; }
+.dept-section { display: none; }
+.dept-section.on { display: block; }
 .dport-btn {
   display: flex; align-items: center; gap: 8px;
   padding: 8px 10px; border-radius: var(--radius-sm); cursor: pointer;
@@ -1176,11 +1176,344 @@ body.light .pill { border-radius: 10rem; }
   body.light .brand-sub { display: none; }
   body.light #status-bar .sb-item:nth-of-type(n+3) { display: none; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   GENTELELLA V4 ADAPTATION
+   Derived from Gentelella v4.0.3 design tokens and shell patterns.
+   Copyright (c) 2014–2026 Aigars Silkalns & Colorlib — MIT License.
+   ═══════════════════════════════════════════════════════════════════ */
+:root {
+  --gt-sidebar-bg: #1a2332;
+  --gt-sidebar-hover: rgba(255,255,255,.04);
+  --gt-sidebar-active: rgba(26,187,156,.12);
+  --gt-sidebar-text: #7b8fa3;
+  --gt-sidebar-text-hover: #c5d0dc;
+  --gt-primary: #1abb9c;
+  --gt-primary-dark: #169f85;
+  --gt-body: #f5f7fb;
+  --gt-surface: #ffffff;
+  --gt-surface-2: #f9fafb;
+  --gt-border: #e6e7eb;
+  --gt-text: #1e2633;
+  --gt-text-2: #626d7d;
+  --gt-text-3: #7e8896;
+  --gt-sidebar-w: 252px;
+}
+
+body.light {
+  --primary: var(--gt-primary);
+  --primary-dim: rgba(26,187,156,.08);
+  --primary-glow: rgba(26,187,156,.16);
+  --ai: #4263eb;
+  --ai-dim: rgba(66,99,235,.08);
+  --bg: var(--gt-body);
+  --bg2: var(--gt-surface);
+  --bg3: var(--gt-surface-2);
+  --bg4: #f1f3f5;
+  --bg5: #e9ecef;
+  --card-bg: var(--gt-surface);
+  --bar-bg: var(--gt-sidebar-bg);
+  --sidebar-bg: var(--gt-surface);
+  --input-bg: var(--gt-surface);
+  --tab-bg: #f1f3f5;
+  --tab-on: var(--gt-surface);
+  --border: var(--gt-border);
+  --border2: #eff0f3;
+  --border3: #f3f4f6;
+  --text: var(--gt-text);
+  --text2: var(--gt-text-2);
+  --text3: var(--gt-text-3);
+  --text4: #a4acb7;
+  --radius: 6px;
+  --radius-sm: 4px;
+  --radius-lg: 8px;
+  --shadow-sm: rgba(30,38,51,.04) 0 2px 4px;
+  --shadow-md: 0 0 0 1px rgba(4,32,69,.08), rgba(30,38,51,.06) 0 4px 10px;
+  --shadow-lg: 0 0 0 1px rgba(4,32,69,.10), rgba(30,38,51,.12) 0 14px 34px;
+}
+
+body.dark {
+  --primary: var(--gt-primary);
+  --primary-dim: rgba(26,187,156,.14);
+  --primary-glow: rgba(26,187,156,.22);
+  --bg: #0f1623;
+  --bg2: #1a2332;
+  --bg3: #141d2b;
+  --bg4: #202b3b;
+  --bg5: #263346;
+  --card-bg: #1a2332;
+  --bar-bg: #1a2332;
+  --sidebar-bg: #1a2332;
+  --input-bg: #141d2b;
+  --tab-bg: #141d2b;
+  --tab-on: #202b3b;
+  --border: rgba(255,255,255,.08);
+  --border2: rgba(255,255,255,.06);
+  --border3: rgba(255,255,255,.04);
+  --text: #e6ebf2;
+  --text2: #b3bccb;
+  --text3: #8a93a3;
+  --text4: #5a6473;
+  --shadow-sm: rgba(0,0,0,.22) 0 2px 4px;
+  --shadow-md: 0 0 0 1px rgba(255,255,255,.08), rgba(0,0,0,.28) 0 4px 12px;
+  --shadow-lg: 0 0 0 1px rgba(255,255,255,.08), rgba(0,0,0,.42) 0 16px 38px;
+}
+
+body::before,
+body.light::before { display: none; }
+
+body {
+  background: var(--bg);
+  font-size: 14px;
+  line-height: 1.4286;
+}
+.skip-link {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 10000;
+  padding: 8px 14px;
+  background: var(--primary);
+  color: #fff;
+  border-radius: var(--radius);
+  font-weight: 600;
+  transform: translateY(-200%);
+  transition: transform 150ms ease;
+}
+.skip-link:focus { transform: translateY(0); }
+
+.card,
+.kpi,
+.chart-card,
+.ks-card,
+.lifecycle-metric {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+.card:hover,
+.kpi:hover,
+.chart-card:hover { box-shadow: var(--shadow-md); }
+.kpi::before { background: var(--kpi-accent, var(--primary)); }
+.tbl th {
+  background: var(--bg3);
+  color: var(--text3);
+  border-bottom: 1px solid var(--border);
+}
+.tbl td { color: var(--text2); }
+.tbl tbody tr:hover td { background: var(--primary-dim); }
+
+@media (min-width: 901px) {
+  body.light #bar,
+  body.dark #bar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: var(--gt-sidebar-w);
+    height: 100vh;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    overflow-y: auto;
+    background: var(--gt-sidebar-bg);
+    border: 0;
+    box-shadow: none;
+    z-index: 400;
+  }
+  body.light .bar-brand,
+  body.dark .bar-brand {
+    min-height: 56px;
+    padding: 0 16px;
+    gap: 10px;
+    border: 0;
+    border-bottom: 1px solid rgba(255,255,255,.06);
+  }
+  body.light .logo,
+  body.dark .logo {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background: var(--gt-primary);
+    box-shadow: none;
+  }
+  body.light .brand-name,
+  body.dark .brand-name { color: #fff; font-size: 15px; font-weight: 600; }
+  body.light .brand-sub,
+  body.dark .brand-sub { color: var(--gt-sidebar-text); font-size: 9px; }
+  body.light .tabs,
+  body.dark .tabs {
+    width: 100%;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+  body.light .tabs::before,
+  body.dark .tabs::before {
+    content: "REPORTING";
+    padding: 16px 12px 5px;
+    color: rgba(123,143,163,.55);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .06em;
+  }
+  body.light .tab,
+  body.dark .tab {
+    width: 100%;
+    min-height: 36px;
+    height: auto;
+    padding: 8px 12px;
+    justify-content: flex-start;
+    border: 0;
+    border-radius: var(--radius-sm);
+    color: var(--gt-sidebar-text);
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 1.3;
+    text-align: left;
+  }
+  body.light .tab svg,
+  body.dark .tab svg { width: 18px; height: 18px; margin-right: 2px; opacity: .55; }
+  body.light .tab:hover,
+  body.dark .tab:hover {
+    color: var(--gt-sidebar-text-hover);
+    background: var(--gt-sidebar-hover);
+    transform: none;
+  }
+  body.light .tab.on,
+  body.dark .tab.on {
+    color: #fff;
+    background: var(--gt-sidebar-active);
+    box-shadow: inset 3px 0 0 var(--gt-primary);
+  }
+  body.light .tab.on svg,
+  body.dark .tab.on svg { color: var(--gt-primary); opacity: 1; }
+  body.light .bar-right,
+  body.dark .bar-right {
+    width: 100%;
+    margin-top: auto;
+    padding: 12px 10px 16px;
+    border-top: 1px solid rgba(255,255,255,.06);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  body.light .bar-right > div,
+  body.dark .bar-right > div { display: none !important; }
+  body.light .bar-right .bar-btn,
+  body.dark .bar-right .bar-btn,
+  body.light #theme-toggle,
+  body.dark #theme-toggle {
+    min-width: 0;
+    min-height: 34px;
+    padding: 7px 8px;
+    justify-content: center;
+    border: 1px solid rgba(255,255,255,.08) !important;
+    background: rgba(255,255,255,.035) !important;
+    color: var(--gt-sidebar-text) !important;
+    font-size: 10px;
+  }
+  body.light .bar-right .bar-btn:hover,
+  body.dark .bar-right .bar-btn:hover,
+  body.light #theme-toggle:hover,
+  body.dark #theme-toggle:hover {
+    color: #fff !important;
+    background: rgba(255,255,255,.08) !important;
+    border-color: rgba(255,255,255,.14) !important;
+  }
+  body.light #status-bar,
+  body.dark #status-bar {
+    margin-left: var(--gt-sidebar-w);
+    height: 56px;
+    padding: 0 24px;
+    background: color-mix(in srgb, var(--card-bg) 90%, transparent);
+    border-bottom: 1px solid var(--border);
+    box-shadow: none;
+    backdrop-filter: blur(12px);
+    color: var(--text3);
+  }
+  body.light #status-bar::before,
+  body.dark #status-bar::before {
+    content: "Portfolio Intelligence";
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 600;
+    margin-right: 4px;
+  }
+  body.light #content,
+  body.dark #content {
+    margin-left: var(--gt-sidebar-w);
+    padding: 24px 28px 48px;
+    background: var(--bg);
+  }
+}
+
+.mkt-sidebar,
+.dept-sidebar {
+  background: var(--card-bg);
+  border-color: var(--border);
+  box-shadow: var(--shadow-sm);
+}
+.snav-item.on,
+.dsub-btn.on,
+.qbtn.on,
+.pp.on {
+  background: var(--primary-dim) !important;
+  color: var(--primary) !important;
+  box-shadow: none !important;
+}
+.dport-btn.on {
+  background: var(--primary-dim) !important;
+  color: var(--primary) !important;
+  box-shadow: inset 3px 0 0 var(--primary) !important;
+}
+.dport-btn.on .dport-name { color: var(--primary); }
+.dport-btn .dport-ico {
+  background: var(--bg4) !important;
+  color: var(--text3) !important;
+}
+.dport-btn.on .dport-ico {
+  background: var(--primary-dim) !important;
+  color: var(--primary) !important;
+}
+
+@media (max-width: 900px) {
+  body.light #bar,
+  body.dark #bar {
+    background: var(--gt-sidebar-bg);
+    border: 0;
+  }
+  body.light .tab,
+  body.dark .tab { color: var(--gt-sidebar-text); }
+  body.light .tab.on,
+  body.dark .tab.on { color: #fff; border-bottom-color: var(--gt-primary); }
+  body.light #content,
+  body.dark #content { padding: 16px 12px 32px; }
+  .mkt-layout,
+  .dept-layout { display: block; }
+  .mkt-sidebar,
+  .dept-sidebar {
+    position: static;
+    width: 100%;
+    margin: 0 0 14px;
+    display: flex;
+    overflow-x: auto;
+    gap: 4px;
+  }
+  .mkt-sidebar .snav-item,
+  .dept-sidebar .dport-btn {
+    width: auto;
+    min-width: max-content;
+    margin: 0;
+  }
+}
 </style>
 </head>
 <body>
+<a class="skip-link" href="#content">Skip to dashboard content</a>
 <div id="offbanner">&#9889; Offline mode. Chart.js loads from CDN once then caches. Dashboard data is always available.</div>
-<div id="bar">
+<aside id="bar" aria-label="Dashboard navigation and controls">
   <!-- Brand -->
   <div class="bar-brand">
     <div class="logo">
@@ -1233,10 +1566,10 @@ body.light .pill { border-radius: 10rem; }
       Refresh
     </button>
   </div>
-</div>
+</aside>
 
 <!-- MCP + Asana status strip -->
-<div id="status-bar">
+<header id="status-bar">
   <div class="sb-item">
     <div class="sb-dot blue pulse" id="asana-status-dot"></div>
     <span id="asana-status-label">Connecting to Asana…</span>
@@ -1244,12 +1577,12 @@ body.light .pill { border-radius: 10rem; }
   <div class="sb-divider"></div>
   <div class="sb-item">
     <div class="sb-dot blue pulse"></div>
-    <span>MCP active</span>
+    <span>Reporting API active</span>
   </div>
   <div class="sb-divider"></div>
   <div class="sb-item">
-    <div class="sb-dot violet"></div>
-    <span>AI ready</span>
+    <div class="sb-dot violet" id="ai-status-dot"></div>
+    <span id="ai-runtime-label">AI not configured</span>
   </div>
   <div class="sb-divider"></div>
   <div class="sb-item">
@@ -1264,14 +1597,14 @@ body.light .pill { border-radius: 10rem; }
       Calculating dataset totals…
     </div>
   </div>
-</div>
+</header>
 
-<div id="content">
+<main id="content" tabindex="-1">
   <div id="data-integrity-banner" role="status" aria-live="polite" style="display:none;margin-bottom:12px"></div>
   <div id="pg-pmo" class="pg on"></div>
   <div id="pg-mkt" class="pg"></div>
   <div id="pg-dept" class="pg"></div>
-</div>
+</main>
 
 
 <!-- AI Settings Modal -->
@@ -2165,6 +2498,29 @@ var CAMP_PROJ={
 // active view dataset so every KPI, chart and narrative uses the same filter.
 var C_ALL=C.slice();
 var qFilter="all";
+var mktDateFrom="2026-01-01";
+var mktDateTo="2026-12-31";
+
+function marketingDateRange(){
+  var from=new Date(mktDateFrom+"T00:00:00");
+  var to=new Date(mktDateTo+"T23:59:59");
+  return {
+    fromMonth:isNaN(from.getTime())?1:from.getMonth()+1,
+    toMonth:isNaN(to.getTime())?12:to.getMonth()+1
+  };
+}
+
+function filterMarketingCampaigns(){
+  var range=marketingDateRange();
+  return C_ALL.filter(function(c){
+    var inQuarter=qFilter==="all"||
+      (qFilter==="Q2"&&(c.s.indexOf("Q2")>=0||["Onboarding","Re-Engage","Google DG","AI Summit","Brand Refresh","AI Assistant"].some(function(n){return c.s.indexOf(n)>=0;})))||
+      (qFilter==="Q3"&&(c.s.indexOf("Q3")>=0||["Meta Ads","EMEA Road.","Partner Web.","LinkedIn ABM","Dreamforce"].some(function(n){return c.s.indexOf(n)>=0;})));
+    if(!inQuarter)return false;
+    var months=CAMP_MONTHS[c.name];
+    return !months||months.some(function(month){return month>=range.fromMonth&&month<=range.toMonth;});
+  });
+}
 // ── Period pill handler (Monthly / Qtly / H1H2) ─────────────────────
 var _chartPeriod="M";
 function updateChartPeriod(period, btnEl){
@@ -2190,12 +2546,7 @@ function updateChartPeriod(period, btnEl){
 // ── Quarter/date filter — filters campaign data and re-derives KPIs ──
 function setQ(q,el){
   qFilter=q;
-  C=C_ALL.filter(function(c){
-    if(q==="all")return true;
-    if(q==="Q2")return c.s.indexOf("Q2")>=0||["Onboarding","Re-Engage","Google DG","AI Summit","Brand Refresh","AI Assistant"].some(function(n){return c.s.indexOf(n)>=0;});
-    if(q==="Q3")return c.s.indexOf("Q3")>=0||["Meta Ads","EMEA Road.","Partner Web.","LinkedIn ABM","Dreamforce"].some(function(n){return c.s.indexOf(n)>=0;});
-    return true;
-  });
+  C=filterMarketingCampaigns();
   saveState();
   renderMkt();
   showToast((q==="all"?"All quarters":q)+" applied across every marketing metric");
@@ -2643,21 +2994,27 @@ var CAMP_MONTHLY={
 };
 // Period-aware data accessor — returns {labels, mql, pipeline, spend, target}
 function getPeriodData(period){
-  var target250=function(n){var a=[];for(var i=0;i<n;i++)a.push(250);return a;};
+  var range=marketingDateRange();
+  var target=function(n,value){var a=[];for(var i=0;i<n;i++)a.push(value);return a;};
   if(period==="Q"){
-    return {labels:CAMP_MONTHLY.quarterly.labels,mql:CAMP_MONTHLY.quarterly.mql,
-      pipeline:CAMP_MONTHLY.quarterly.pipeline,spend:CAMP_MONTHLY.quarterly.spend,
-      target:target250(4)};
+    var qStart=Math.max(0,Math.floor((range.fromMonth-1)/3));
+    var qEnd=Math.min(3,Math.floor((range.toMonth-1)/3));
+    return {labels:CAMP_MONTHLY.quarterly.labels.slice(qStart,qEnd+1),mql:CAMP_MONTHLY.quarterly.mql.slice(qStart,qEnd+1),
+      pipeline:CAMP_MONTHLY.quarterly.pipeline.slice(qStart,qEnd+1),spend:CAMP_MONTHLY.quarterly.spend.slice(qStart,qEnd+1),
+      target:target(qEnd-qStart+1,750)};
   }
   if(period==="H"){
-    return {labels:CAMP_MONTHLY.halfyear.labels,mql:CAMP_MONTHLY.halfyear.mql,
-      pipeline:CAMP_MONTHLY.halfyear.pipeline,spend:CAMP_MONTHLY.halfyear.spend,
-      target:target250(2)};
+    var hStart=range.fromMonth<=6?0:1;
+    var hEnd=range.toMonth<=6?0:1;
+    return {labels:CAMP_MONTHLY.halfyear.labels.slice(hStart,hEnd+1),mql:CAMP_MONTHLY.halfyear.mql.slice(hStart,hEnd+1),
+      pipeline:CAMP_MONTHLY.halfyear.pipeline.slice(hStart,hEnd+1),spend:CAMP_MONTHLY.halfyear.spend.slice(hStart,hEnd+1),
+      target:target(hEnd-hStart+1,1500)};
   }
-  // Default: monthly
-  return {labels:CAMP_MONTHLY.labels,mql:CAMP_MONTHLY.mql,
-    pipeline:CAMP_MONTHLY.pipeline,spend:CAMP_MONTHLY.spend,
-    target:target250(12)};
+  var start=Math.max(0,range.fromMonth-1),end=Math.min(11,range.toMonth-1);
+  var mql=CAMP_MONTHLY.mql.slice(start,end+1);
+  return {labels:CAMP_MONTHLY.labels.slice(start,end+1),mql:mql,
+    pipeline:CAMP_MONTHLY.pipeline.slice(start,end+1),spend:CAMP_MONTHLY.spend.slice(start,end+1),
+    target:target(mql.length,250)};
 }
 var CAT_DATA={
   labels:["Paid Media","Events","Webinar","Email/Nurture","Brand","Product"],
@@ -2723,58 +3080,22 @@ function applyDateFilter(){
   var from=document.getElementById("mkt-date-from");
   var to=document.getElementById("mkt-date-to");
   if(!from||!to)return;
-  var fd=new Date(from.value),td=new Date(to.value);
-  var fromMonth=fd.getMonth()+1,toMonth=td.getMonth()+1;
-  // Filter campaigns by date range
-  var filtered=C.filter(function(c){
-    var months=CAMP_MONTHS[c.name];
-    if(!months)return true;
-    return months.some(function(m){return m>=fromMonth&&m<=toMonth;});
-  });
-  // Also slice CAMP_MONTHLY for chart update
-  var mi=Math.max(0,fromMonth-1),mj=Math.min(11,toMonth-1);
-  var slicedLabels=CAMP_MONTHLY.labels.slice(mi,mj+1);
-  var slicedMQL=CAMP_MONTHLY.mql.slice(mi,mj+1);
-  var slicedPipe=CAMP_MONTHLY.pipeline.slice(mi,mj+1);
-  var target250=slicedMQL.map(function(){return 250;});
-  if(chartInst["ch-mqlTrend"]){
-    chartInst["ch-mqlTrend"].data.labels=slicedLabels;
-    chartInst["ch-mqlTrend"].data.datasets[0].data=slicedMQL;
-    chartInst["ch-mqlTrend"].data.datasets[1].data=target250;
-    chartInst["ch-mqlTrend"].update("active");
+  if(!from.value||!to.value||from.value>to.value){
+    showToast("Choose a valid date range.",true);
+    return;
   }
-  if(chartInst["ch-pipeTrend"]){
-    chartInst["ch-pipeTrend"].data.labels=slicedLabels;
-    chartInst["ch-pipeTrend"].data.datasets[0].data=slicedPipe;
-    chartInst["ch-pipeTrend"].update("active");
-  }
-  _updateFilteredCharts(filtered,filtered.filter(function(c){return c.pipe!=null;}),
-    filtered.reduce(function(a,c){return a+(c.budget||0);},0));
-  // Show active range indicator
-  var ind=document.getElementById("date-filter-indicator");
-  if(ind){ind.textContent=from.value.slice(0,7)+" → "+to.value.slice(0,7);ind.style.display="inline";}
+  mktDateFrom=from.value;
+  mktDateTo=to.value;
+  C=filterMarketingCampaigns();
+  renderMkt();
+  showToast("Date range applied across every marketing metric");
 }
 function resetDateFilter(){
-  var from=document.getElementById("mkt-date-from");
-  var to=document.getElementById("mkt-date-to");
-  if(from)from.value="2026-01-01";
-  if(to)to.value="2026-12-31";
-  // Reset to full dataset
-  if(chartInst["ch-mqlTrend"]){
-    chartInst["ch-mqlTrend"].data.labels=CAMP_MONTHLY.labels;
-    chartInst["ch-mqlTrend"].data.datasets[0].data=CAMP_MONTHLY.mql;
-    chartInst["ch-mqlTrend"].data.datasets[1].data=CAMP_MONTHLY.mql.map(function(){return 250;});
-    chartInst["ch-mqlTrend"].update("active");
-  }
-  if(chartInst["ch-pipeTrend"]){
-    chartInst["ch-pipeTrend"].data.labels=CAMP_MONTHLY.labels;
-    chartInst["ch-pipeTrend"].data.datasets[0].data=CAMP_MONTHLY.pipeline;
-    chartInst["ch-pipeTrend"].update("active");
-  }
-  _updateFilteredCharts(C,C.filter(function(c){return c.pipe!=null;}),
-    C.reduce(function(a,c){return a+(c.budget||0);},0));
-  var ind=document.getElementById("date-filter-indicator");
-  if(ind)ind.style.display="none";
+  mktDateFrom="2026-01-01";
+  mktDateTo="2026-12-31";
+  C=filterMarketingCampaigns();
+  renderMkt();
+  showToast("Date range reset");
 }
 
 // ── Theme (light / dark) ───────────────────────────────────────────
@@ -2941,6 +3262,17 @@ function departmentStatus(project){
   return {on_track:"green",at_risk:"yellow",off_track:"red",unreported:"gray"}[project.declaredHealth]||"gray";
 }
 
+function departmentSummary(text,fallback){
+  var clean=String(text||"")
+    .replace(/[═━]{3,}/g," ")
+    .replace(/\s+/g," ")
+    .trim();
+  if(!clean)return fallback||"No Asana project status narrative is available.";
+  var sentence=clean.match(/^.*?[.!?](?:\s|$)/);
+  var summary=sentence&&sentence[0].length>=40?sentence[0].trim():clean;
+  return summary.length>260?summary.slice(0,257).trim()+"…":summary;
+}
+
 function departmentProjectFromLive(project){
   var counts=project.liveMetrics&&project.liveMetrics.counts||{};
   var risk=project.liveMetrics&&project.liveMetrics.risk||{};
@@ -2964,7 +3296,8 @@ function departmentProjectFromLive(project){
       done:counts.complete||0,
       overdue:counts.overdue||0
     },
-    note:statusText||risk.driver||"No Asana project status narrative is available.",
+    note:departmentSummary(statusText,risk.driver),
+    fullNote:statusText||"",
     phase:project.currentStatus&&project.currentStatus.title||"",
     metrics:[
       {l:"Owner",v:owner},
@@ -3013,22 +3346,14 @@ function setDeptSubSec(port,sec){
 // ── Sidebar switch ────────────────────────────────────────────────────
 function switchDeptPort(port,btn){
   dPortSec=port;
-  document.querySelectorAll(".dport-btn").forEach(function(b){b.classList.remove("on");});
-  if(btn)btn.classList.add("on");
-  document.querySelectorAll(".dport-view").forEach(function(v){
-    v.classList.toggle("on",v.id==="dv-"+port);
-  });
+  renderDept();
   setTimeout(function(){buildDeptCharts(port);flushCharts();},80);
 }
 
 // ── Sub-section switch ────────────────────────────────────────────────
 function switchDeptSec(port,sec,btn){
   setDeptSubSec(port,sec);
-  document.querySelectorAll(".dsub-btn-"+port).forEach(function(b){b.classList.remove("on");});
-  if(btn)btn.classList.add("on");
-  document.querySelectorAll(".dss-"+port).forEach(function(s){
-    s.classList.toggle("on",s.id==="dss-"+port+"-"+sec);
-  });
+  renderDept();
   setTimeout(function(){buildDeptCharts(port);flushCharts();},80);
 }
 
@@ -3053,9 +3378,7 @@ function renderDept(){
     var cnt=port?port.projects.length:0;
     var col=port?port.color:"#94a3b8";
     var on=dPortSec===p.key;
-    sidebar+='<button class="dport-btn'+(on?" on":"")+'\" id="dpb-'+p.key+'" onclick="switchDeptPort(\''+p.key+'\',this)"'+
-      (on?' style="background:linear-gradient(135deg,'+col+','+col+'dd);color:#fff;box-shadow:0 2px 10px '+col+'44"':'')+
-      '>'+
+    sidebar+='<button class="dport-btn'+(on?" on":"")+'\" id="dpb-'+p.key+'" aria-pressed="'+on+'" onclick="switchDeptPort(\''+p.key+'\',this)">'+
       '<span class="dport-ico" style="background:'+(on?"rgba(255,255,255,.2)":col+'18"')+';color:'+(on?"#fff":col)+';">'+p.icon+'</span>'+
       '<div class="dport-labels">'+
         '<span class="dport-name">'+p.label+'</span>'+
@@ -3066,12 +3389,12 @@ function renderDept(){
   });
   sidebar+='</div>';
 
-  // Build all portfolio views
-  var views="";
-  ports.forEach(function(p){
-    var port=DPORT[p.key];
-    views+='<div class="dport-view'+(dPortSec===p.key?" on":"")+'\" id="dv-'+p.key+'">'+renderPortView(p.key,port,p)+'</div>';
-  });
+  // Render only the active portfolio. Inactive portfolios are rebuilt on
+  // selection instead of leaving their charts and report panels hidden.
+  var activeConfig=ports.find(function(p){return p.key===dPortSec;})||ports[0];
+  var activePort=activeConfig&&DPORT[activeConfig.key];
+  var views=activeConfig?
+    '<div class="dport-view on" id="dv-'+activeConfig.key+'">'+renderPortView(activeConfig.key,activePort,activeConfig)+'</div>':"";
 
   el.innerHTML='<div class="dept-layout">'+sidebar+'<div class="dept-content">'+views+'</div></div>';
 }
@@ -3096,10 +3419,8 @@ function renderPortView(key,port,dConf){
   var subNav='<div class="dept-subnav" style="margin-bottom:16px">'+
     sections.map(function(s){
       var on=subSec===s.id;
-      return '<button class="dsub-btn dsub-btn-'+key+(on?" on":"")+'\" id="dsb-'+key+'-'+s.id+'" '+
-        'onclick="switchDeptSec(\''+key+'\',\''+s.id+'\',this)" '+
-        (on?'style="background:'+col+';color:#fff;border-color:'+col+'40;box-shadow:0 2px 8px '+col+'33"':'')+
-        '>'+s.icon+' '+s.label+'</button>';
+      return '<button class="dsub-btn dsub-btn-'+key+(on?" on":"")+'\" id="dsb-'+key+'-'+s.id+'" aria-pressed="'+on+'" '+
+        'onclick="switchDeptSec(\''+key+'\',\''+s.id+'\',this)">'+s.icon+' '+s.label+'</button>';
     }).join("")+
   '</div>';
 
@@ -3122,22 +3443,16 @@ function renderPortView(key,port,dConf){
     '</div>')+
   '</div>';
 
-  // ── Sub-section panels ──────────────────────────────────────────────
-  var panels="";
-  sections.forEach(function(s){
-    var content="";
-    if(projs.length===0){
-      content=renderEmptyPortfolio(key,dConf,col);
-    } else {
-      if(s.id==="overview") content=renderDeptOverview(key,port,projs,col);
-      else if(s.id==="projects") content=renderDeptProjects(projs,col);
-      else if(s.id==="budget") content=renderDeptBudget(key,port,projs,col);
-      else if(s.id==="health") content=renderDeptHealth(key,projs,col,onTrack,atRisk,offTrack,totalTasks,doneTasks,overdueTasks);
-      else if(s.id==="insights") content=renderDeptInsights(key,port,projs,col);
-      else if(s.id==="improvements") content=renderDeptImprovements(key,port,projs,col);
-    }
-    panels+='<div class="dss-'+key+(subSec===s.id?" on":"")+'\" id="dss-'+key+'-'+s.id+'">'+content+'</div>';
-  });
+  // Render only the selected report section.
+  var content="";
+  if(projs.length===0)content=renderEmptyPortfolio(key,dConf,col);
+  else if(subSec==="overview")content=renderDeptOverview(key,port,projs,col);
+  else if(subSec==="projects")content=renderDeptProjects(projs,col);
+  else if(subSec==="budget")content=renderDeptBudget(key,port,projs,col);
+  else if(subSec==="health")content=renderDeptHealth(key,projs,col,onTrack,atRisk,offTrack,totalTasks,doneTasks,overdueTasks);
+  else if(subSec==="insights")content=renderDeptInsights(key,port,projs,col);
+  else if(subSec==="improvements")content=renderDeptImprovements(key,port,projs,col);
+  var panels='<div class="dept-section dss-'+key+' on" data-portfolio="'+key+'" id="dss-'+key+'-'+subSec+'">'+content+'</div>';
 
   return hero+subNav+panels;
 }
@@ -3268,7 +3583,11 @@ function renderDeptProjects(projs,col){
         '</div>'+
         (p.budget!=null?'<div style="text-align:right;flex-shrink:0"><div style="font-size:14px;font-weight:700;color:var(--text,#1a2332)">'+$m(p.budget)+'</div><div style="font-size:9px;color:var(--text4,#94a3b8);text-transform:uppercase">budget</div></div>':"")+
       '</div>'+
-      '<div style="font-size:11px;color:var(--text2,#475569);line-height:1.65;margin-bottom:10px;padding:8px 10px;background:var(--bg3,#f8fafc);border-radius:7px">'+esc(p.note)+'</div>'+
+      '<div style="font-size:11px;color:var(--text2,#475569);line-height:1.65;margin-bottom:10px;padding:8px 10px;background:var(--bg3,#f8fafc);border-radius:7px">'+
+        esc(p.note)+
+        (p.fullNote&&departmentSummary(p.fullNote)!==p.fullNote?
+          '<details style="margin-top:6px"><summary style="cursor:pointer;color:var(--primary);font-weight:600">View latest status narrative</summary><div style="margin-top:6px;max-height:180px;overflow:auto;white-space:pre-wrap">'+esc(p.fullNote)+'</div></details>':"")+
+      '</div>'+
       '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:10px">'+
         p.metrics.map(function(m){return '<div style="background:var(--bg3,#f8fafc);border-radius:7px;padding:7px 9px"><div style="font-size:9px;color:var(--text4,#94a3b8);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px">'+m.l+'</div><div style="font-size:12px;font-weight:700;color:var(--text,#1a2332)">'+m.v+'</div></div>';}).join("")+
       '</div>'+
@@ -4060,13 +4379,19 @@ function initAIConfig(){
 
 function updateAISettingsBtn(){
   var btn=document.getElementById('ai-settings-btn');
+  var label=document.getElementById('ai-runtime-label');
+  var dot=document.getElementById('ai-status-dot');
   if(!btn)return;
   if(_aiKey||_aiProxy){
     btn.innerHTML='<span style="color:#22c55e">&#9679;</span> AI Active';
     btn.style.borderColor='#86efac';
+    if(label)label.textContent='AI configured';
+    if(dot){dot.style.background='var(--ai)';dot.style.opacity='1';}
   } else {
     btn.innerHTML='&#9881; AI Settings';
     btn.style.borderColor='';
+    if(label)label.textContent='AI not configured';
+    if(dot){dot.style.background='var(--text4)';dot.style.opacity='.7';}
   }
 }
 
@@ -4363,7 +4688,7 @@ function showDataIntegrityBanner(){
     banner.style.display="block";
     banner.style.cssText+=";padding:10px 13px;border:1px solid #fecaca;background:#fef2f2;color:#991b1b;border-radius:10px;font-size:11px";
     banner.innerHTML="<strong>Live Asana data unavailable.</strong> "+esc(DATA_ERROR||"Unknown connector error")+
-      " The visible PMO data is a labelled sample dataset and must not be used as a current report. "+
+      " The PMO view is withheld until a trustworthy live payload is available. "+
       '<button onclick="loadLiveReporting(true)" style="margin-left:8px;border:1px solid #ef4444;background:#fff;color:#991b1b;border-radius:6px;padding:3px 8px;cursor:pointer">Retry</button>';
     if(label)label.textContent="Asana unavailable";
     if(dot){dot.className="sb-dot";dot.style.background="#ef4444";}
@@ -4420,7 +4745,7 @@ function buildLiveProjectTrend(project){
   };
 }
 
-function applyReportingModel(model){
+function applyReportingModel(model,preferredMain){
   REPORTING=model;
   DATA_MODE="live";
   DATA_ERROR=null;
@@ -4472,23 +4797,28 @@ function applyReportingModel(model){
     completed:velocity.map(function(bucket){return bucket.completed;}),
     added:velocity.map(function(bucket){return bucket.added;})
   };
+  var targetMain=preferredMain&&TAB_MAP[preferredMain]?preferredMain:(curMain||"pmo");
+  // Live objects are rebuilt on each pull. Clear stale drill-down references,
+  // but keep the user's selected top-level reporting view.
   selPort=null;selProj=null;selPPort=null;pmoView="exec";
   Object.keys(chartInst||{}).forEach(function(id){try{chartInst[id].destroy();}catch(e){}});
   chartInst={};_pending={};projChartPid=null;
   initStats();
   showDataIntegrityBanner();
-  setTab("pmo");
+  setTab(targetMain);
 }
 
 async function loadLiveReporting(force){
+  var requestedMain=curMain||"pmo";
   DATA_MODE="loading";
   showDataIntegrityBanner();
+  if(requestedMain==="pmo")renderPMO();
   try{
     var response=await fetch("/api/reporting"+(force?"?refresh="+Date.now():""),{headers:{Accept:"application/json"}});
     var payload=await response.json();
     if(!response.ok&&response.status!==207)throw new Error(payload.error||("Reporting API "+response.status));
     if(!payload.data)throw new Error("Reporting API returned no data.");
-    applyReportingModel(payload.data);
+    applyReportingModel(payload.data,requestedMain);
     addLog("REFRESH_DASHBOARD","Live Asana reporting data loaded.","success");
     showToast("Live Asana reporting refreshed");
   }catch(error){
@@ -4496,6 +4826,7 @@ async function loadLiveReporting(force){
     DATA_ERROR=error.message;
     showDataIntegrityBanner();
     initStats();
+    if(requestedMain==="pmo")renderPMO();
     addLog("REFRESH_DASHBOARD","Live Asana refresh failed: "+error.message,"error");
   }
 }
@@ -4572,6 +4903,9 @@ function setTab(id, skipRender){
   document.querySelectorAll(".tab").forEach(function(btn, i){
     var active = (i === (TAB_MAP[id]||{}).idx);
     btn.classList.toggle("on", active);
+    btn.setAttribute("aria-pressed",String(active));
+    if(active)btn.setAttribute("aria-current","page");
+    else btn.removeAttribute("aria-current");
   });
   // Update page visibility
   Object.keys(TAB_MAP).forEach(function(key){
@@ -4614,9 +4948,11 @@ function switchProjTab(el,id){
   document.querySelectorAll(".ptab").forEach(function(t){t.classList.remove("on");});var tab=document.getElementById(id);if(tab)tab.classList.add("on");
 }
 function switchMktSec(id){
+  // Support both current (sectionId) and legacy (button, sectionId) handlers.
+  if(typeof id!=="string")id=arguments[1];
+  if(!id)return;
   mktSec=id;saveState();
-  document.querySelectorAll(".mkt-sidebar .snav-item").forEach(function(b){b.classList.toggle("on",b.dataset.sec===id);});
-  document.querySelectorAll(".msec").forEach(function(s){s.classList.toggle("on",s.id==="ms-"+id);});
+  renderMkt();
   setTimeout(function(){upgradeInteractiveElements(document.getElementById("ms-"+id));buildCharts();flushCharts();},80);
 }
 
@@ -4625,6 +4961,21 @@ function switchMktSec(id){
 // ============================================================
 function renderPMO(){
   var el=document.getElementById("pg-pmo");if(!el)return;
+  if(DATA_MODE==="loading"){
+    el.innerHTML='<div class="card" role="status" aria-live="polite" style="min-height:260px;display:grid;place-items:center;text-align:center">'+
+      '<div><div class="ai-spinner" style="display:inline-block;width:28px;height:28px;border-color:var(--border);border-top-color:var(--primary);margin-bottom:12px"></div>'+
+      '<div class="h-page">Loading live portfolio reporting</div>'+
+      '<div class="t-caption" style="margin-top:5px">Retrieving paginated Asana projects, tasks, dependencies, and metrics…</div></div></div>';
+    return;
+  }
+  if(DATA_MODE==="error"){
+    el.innerHTML='<div class="card" role="alert" style="max-width:720px;margin:40px auto;border-left:4px solid var(--danger)">'+
+      '<div class="h-page">Live Asana reporting is unavailable</div>'+
+      '<div class="t-body" style="margin:8px 0 14px">'+esc(DATA_ERROR||"The reporting endpoint did not return data.")+'</div>'+
+      '<button class="bar-btn" onclick="loadLiveReporting(true)" style="color:var(--primary);border-color:var(--primary)">Retry connection</button>'+
+      '<div class="t-caption" style="margin-top:12px">No sample data is shown in the operational PMO view.</div></div>';
+    return;
+  }
   if(pmoView==="exec"){
     el.innerHTML=renderExec();
     setTimeout(function(){buildCharts();flushCharts();},80);
@@ -4738,7 +5089,7 @@ function renderExec(){
     '<div class="chart-legend"><span><i style="background:#4f46e5"></i>Completed</span><span><i style="background:#e0e7ff;border:1px dashed #94a3b8"></i>Added</span></div></div>'+
     '<div class="card"><div class="ct">Health score distribution</div>'+
     '<div class="donut-wrap"><div class="chw" style="height:120px"><canvas id="ch-healthDonut" role="img" aria-label="Stacked bar showing on track, at risk, and off track project counts"></canvas></div></div>'+
-    '<div class="chart-legend" style="justify-content:center"><span><i style="background:#22c55e"></i>On Track</span><span><i style="background:#f59e0b"></i>At Risk</span><span><i style="background:#ef4444"></i>Off Track</span></div></div></div>'+
+    '<div class="chart-legend" style="justify-content:center"><span><i style="background:#22c55e"></i>On Track</span><span><i style="background:#f59e0b"></i>At Risk</span><span><i style="background:#ef4444"></i>Off Track</span>'+(DATA_MODE==="live"?'<span><i style="background:#94a3b8"></i>No status</span>':'')+'</div></div></div>'+
     '<div class="g2">'+
     '<div class="card"><div class="ct">Portfolio performance</div>'+
     P.map(function(p){var pt=p.projects.reduce(function(a,r){return a.concat(r.tasks);},[]);var ps=sc(pt);return '<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #f8fafc;cursor:pointer" onclick="drillPort(\''+p.gid+'\')" data-tip="'+esc(p.name+"\n"+p.projects.length+" projects\nScore: "+ps.v+"/100\nClick to explore")+'"><div style="display:flex;align-items:center;gap:8px"><div style="width:3px;height:24px;border-radius:2px;background:'+p.color+'"></div><div><div style="font-size:11px;font-weight:600">'+p.name+'</div><div style="font-size:9px;color:#64748b">'+p.projects.length+' projects &middot; '+ps.ov+' overdue</div></div></div><div style="display:flex;align-items:center;gap:8px">'+ring(ps.v,34)+bdg(ps.v)+'</div></div>';}).join("")+'</div>'+
@@ -4748,7 +5099,20 @@ function renderExec(){
     '<div class="card"><div class="ct">Critical path &mdash; next 14 days</div>'+
     (crit.length===0?'<p style="font-size:11px;color:#64748b">No tasks due in 14 days</p>':crit.map(function(t){var d=Math.round((new Date(t.due)-new Date(TODAY))/86400000);return '<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid #f8fafc;font-size:11px"><div style="width:32px;height:32px;border-radius:7px;background:'+(d<=2?"#fef2f2":"#f8fafc")+';display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0"><span style="font-size:12px;font-weight:700;color:'+(d<=2?"#dc2626":"#475569")+';line-height:1">'+d+'</span><span style="font-size:7px;color:#64748b">days</span></div><div style="flex:1;min-width:0"><div style="font-size:11px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(t.n)+'</div><div style="font-size:10px;color:#64748b">'+esc(t.proj)+'</div></div></div>';}).join(""))+'</div>'+
     '<div class="card"><div class="ct">All projects</div><div style="display:flex;flex-wrap:wrap;gap:6px">'+
-    allP.map(function(r){var ps=sc(r.tasks),asR=ASANA_STATUS[r.gid],asCol=asR?asR.color:"green",sysSt=ps.v>=80?"green":ps.v>=60?"yellow":"red",diverge=asCol!==sysSt;return '<div onclick="drillProj(\''+r.gid+'\')" class="projcard" style="border-left:3px solid '+r.pC+';flex:1 1 140px;min-width:130px"><div style="font-size:11px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:3px">'+esc(r.name)+'</div><div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap">'+bdg(ps.v)+(ps.ov>0?'<span class="pill" style="background:#fef2f2;color:#dc2626">'+ps.ov+'&#9888;</span>':'')+(diverge?'<span style="font-size:9px;background:#fef9c3;color:#92400e;padding:1px 5px;border-radius:4px;font-weight:600" title="System score and Asana-declared status diverge">&#9650; Signal mismatch</span>':'')+'</div></div>';}).join("")+'</div></div></div>';
+    allP.map(function(r){
+      var ps=sc(r.tasks);
+      var asCol={on_track:"green",at_risk:"yellow",off_track:"red"}[r.declaredHealth]||"gray";
+      var asLabel={on_track:"On Track",at_risk:"At Risk",off_track:"Off Track"}[r.declaredHealth]||"No status";
+      var sysSt=ps.v>=80?"green":ps.v>=60?"yellow":"red";
+      var diverge=asCol!=="gray"&&asCol!==sysSt;
+      var statusColor={green:"#16a34a",yellow:"#d97706",red:"#dc2626",gray:"#64748b"}[asCol];
+      return '<div onclick="drillProj(\''+r.gid+'\')" class="projcard" style="border-left:3px solid '+r.pC+';flex:1 1 140px;min-width:130px"><div style="font-size:11px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-bottom:3px">'+esc(r.name)+'</div><div style="display:flex;gap:4px;align-items:center;flex-wrap:wrap">'+
+        '<span class="pill" style="background:'+statusColor+'14;color:'+statusColor+'">'+asLabel+'</span>'+
+        '<span class="pill" title="Calculated execution score" style="background:var(--bg4);color:var(--text3)">'+ps.v+'/100 calc</span>'+
+        (ps.ov>0?'<span class="pill" style="background:#fef2f2;color:#dc2626">'+ps.ov+'&#9888;</span>':'')+
+        (diverge?'<span style="font-size:9px;background:#fef9c3;color:#92400e;padding:1px 5px;border-radius:4px;font-weight:600" title="Calculated execution score and Asana-declared status diverge">&#9650; Signal mismatch</span>':'')+
+        '</div></div>';
+    }).join("")+'</div></div></div>';
 }
 function renderPortfolio(){
   var port=selPort;
@@ -4989,6 +5353,24 @@ function renderPulse(tPipe,avgROI,utilPct,completedN,attPct,tAL,tTL,tBgt,tSpent,
 }
 
 function renderMkt(){
+  if(!C.length){
+    document.getElementById("pg-mkt").innerHTML=
+      '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px">'+
+        '<div><h1 style="font-size:17px;font-weight:700;margin:0 0 3px">Marketing Campaigns &mdash; FY2026</h1>'+
+        '<div style="font-size:11px;color:var(--text3)">No campaigns match the selected period.</div></div>'+
+        '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">'+
+          '<div class="qfilter">'+["all","Q2","Q3"].map(function(q){return '<button class="qbtn'+(qFilter===q?" on":"")+'" aria-pressed="'+(qFilter===q)+'" onclick="setQ(\''+q+'\',this)">'+q+'</button>';}).join("")+'</div>'+
+          '<label for="mkt-date-from" class="t-caption">From</label><input type="date" id="mkt-date-from" value="'+mktDateFrom+'" onchange="applyDateFilter()">'+
+          '<label for="mkt-date-to" class="t-caption">To</label><input type="date" id="mkt-date-to" value="'+mktDateTo+'" onchange="applyDateFilter()">'+
+          '<button class="bar-btn" onclick="resetDateFilter()">Reset</button>'+
+        '</div>'+
+      '</div>'+
+      '<div class="card" style="min-height:260px;display:grid;place-items:center;text-align:center">'+
+        '<div><div style="font-size:28px;margin-bottom:8px;color:var(--primary)">⌁</div>'+
+        '<div class="h-page">No campaigns in this range</div>'+
+        '<div class="t-caption" style="margin-top:5px">Expand the date range or choose another quarter. No values have been estimated.</div></div></div>';
+    return;
+  }
   var hasPipe=C.filter(function(c){return c.pipe!=null;}),
       hasROI=C.filter(function(c){return c.roi!=null;}),
       hasL=C.filter(function(c){return c.aL!=null&&c.tL!=null;}),
@@ -4999,8 +5381,8 @@ function renderMkt(){
       tPipe=hasPipe.reduce(function(a,c){return a+c.pipe;},0),
       tAL=C.reduce(function(a,c){return a+(c.aL||0);},0),
       tTL=C.reduce(function(a,c){return a+(c.tL||0);},0);
-  var avgROI=(hasROI.reduce(function(a,c){return a+c.roi;},0)/hasROI.length).toFixed(2),
-      avgCPL=Math.round(hasCPL.reduce(function(a,c){return a+c.cpl;},0)/hasCPL.length),
+  var avgROI=hasROI.length?(hasROI.reduce(function(a,c){return a+c.roi;},0)/hasROI.length).toFixed(2):"—",
+      avgCPL=hasCPL.length?Math.round(hasCPL.reduce(function(a,c){return a+c.cpl;},0)/hasCPL.length):null,
       attPct=tTL?Math.round(tAL/tTL*100):0,
       utilPct=tBgt?Math.round(tSpent/tBgt*100):0;
   var completedN=C.filter(function(c){return c.status==="Complete";}).length;
@@ -5191,33 +5573,37 @@ function renderMkt(){
       return '<button class="sbtn'+(mktSec===s[0]?" on":"")+'" onclick="switchMktSec(this,\''+s[0]+'\')">'+s[1]+'</button>';
     }).join("")+'</div>';
   var MSECS=[["brief","&#9888;","Monday Brief"],["pulse","&#9671;","Portfolio Pulse"],["attribution","&#8652;","Attribution"],["matrix","&#8862;","Perf. Matrix"],["channel","&#8771;","Channel Scorecard"],["events","&#9670;","Event Intel"],["velocity","&#10145;","Sales Velocity"],["funnel","&#9660;","Revenue Funnel"],["lifecycle","&#10025;","Customer Health"],["cadence","&#9998;","Cadence"]];
-  var sidebarHTML='<div class="mkt-sidebar">'+MSECS.map(function(s){return '<button class="snav-item'+(mktSec===s[0]?" on":"")+'" data-sec="'+s[0]+'" onclick="switchMktSec(this.dataset.sec)"><span class="snav-ico">'+s[1]+'</span><span class="snav-label">'+s[2]+'</span></button>';}).join("")+'</div>';
+  var sidebarHTML='<div class="mkt-sidebar">'+MSECS.map(function(s){return '<button class="snav-item'+(mktSec===s[0]?" on":"")+'" data-sec="'+s[0]+'" aria-pressed="'+(mktSec===s[0])+'" onclick="switchMktSec(this.dataset.sec)"><span class="snav-ico">'+s[1]+'</span><span class="snav-label">'+s[2]+'</span></button>';}).join("")+'</div>';
+  var marketingSections={
+    pulse:sHTML1+sHTML1b,
+    attribution:sHTML2,
+    matrix:sHTML3+sHTML3b,
+    channel:sHTML4,
+    events:sHTML5,
+    velocity:sHTML6+sHTML6b,
+    cadence:sHTML7,
+    funnel:(function(){try{return renderFunnel()+renderPipeAging();}catch(e){return '<p class="t-caption" style="padding:12px">Section unavailable: '+esc(e.message)+'</p>';}})(),
+    lifecycle:(function(){try{return renderLifecycle();}catch(e){return '<p class="t-caption" style="padding:12px">Section unavailable: '+esc(e.message)+'</p>';}})(),
+    brief:(function(){try{return renderBrief();}catch(e){return '<p class="t-caption" style="padding:12px">Section unavailable: '+esc(e.message)+'</p>';}})()
+  };
+  if(!marketingSections[mktSec])mktSec="pulse";
   document.getElementById("pg-mkt").innerHTML=
     '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:14px">'+
     '<div><h1 style="font-size:17px;font-weight:700;margin:0 0 3px">Marketing Campaigns &mdash; FY2026</h1>'+
     '<div style="font-size:11px;color:#64748b">'+C.length+' campaigns &middot; $'+Math.round(tBgt/1000)+'K budget &middot; NAMER + EMEA &middot; '+(qFilter==="all"?"Q2/Q3 2026":qFilter+" 2026")+'</div></div>'+
     '<div style="display:flex;align-items:center;gap:10px">'+
-    '<div class="qfilter" style="margin-right:4px">'+["all","Q2","Q3"].map(function(q){return '<button class="qbtn'+(qFilter===q?" on":"")+'" onclick="setQ(\''+q+'\',this)">'+q+'</button>';}).join("")+'</div>'+
+    '<div class="qfilter" style="margin-right:4px">'+["all","Q2","Q3"].map(function(q){return '<button class="qbtn'+(qFilter===q?" on":"")+'" aria-pressed="'+(qFilter===q)+'" onclick="setQ(\''+q+'\',this)">'+q+'</button>';}).join("")+'</div>'+
     '<div style="display:flex;align-items:center;gap:6px;font-size:11px;color:#64748b">'+
     '<label for="mkt-date-from" style="font-size:10px;color:#94a3b8;font-weight:500">From</label>'+
-    '<input type="date" id="mkt-date-from" value="2026-01-01" onchange="applyDateFilter()" style="font-size:11px;padding:4px 8px;border:1px solid #e2e8f0;border-radius:7px;color:#374151;outline:none;cursor:pointer">'+
+    '<input type="date" id="mkt-date-from" value="'+mktDateFrom+'" onchange="applyDateFilter()" style="font-size:11px;padding:4px 8px;border:1px solid #e2e8f0;border-radius:7px;color:#374151;outline:none;cursor:pointer">'+
     '<label for="mkt-date-to" style="font-size:10px;color:#94a3b8;font-weight:500">To</label>'+
-    '<input type="date" id="mkt-date-to" value="2026-12-31" onchange="applyDateFilter()" class="date-filter-input" style="font-size:11px;padding:5px 9px;border:1px solid #e2e8f0;border-radius:7px;color:#374151;background:#fff;outline:none;cursor:pointer;min-width:120px">'+
+    '<input type="date" id="mkt-date-to" value="'+mktDateTo+'" onchange="applyDateFilter()" class="date-filter-input" style="font-size:11px;padding:5px 9px;border:1px solid #e2e8f0;border-radius:7px;color:#374151;background:#fff;outline:none;cursor:pointer;min-width:120px">'+
     '<button onclick="resetDateFilter()" style="font-size:10px;padding:4px 10px;border:1px solid #e2e8f0;border-radius:7px;background:#f8fafc;color:#64748b;cursor:pointer">Reset</button>'+
     '</div>'+
     '</div></div>'+
     '<div class="mkt-layout">'+sidebarHTML+
     '<div class="mkt-content">'+
-    '<div id="ms-pulse" class="msec'+(mktSec==="pulse"?" on":"")+'">'+sHTML1+sHTML1b+'</div>'+
-    '<div id="ms-attribution" class="msec'+(mktSec==="attribution"?" on":"")+'">'+sHTML2+'</div>'+
-    '<div id="ms-matrix" class="msec'+(mktSec==="matrix"?" on":"")+'">'+sHTML3+sHTML3b+'</div>'+
-    '<div id="ms-channel" class="msec'+(mktSec==="channel"?" on":"")+'">'+sHTML4+'</div>'+
-    '<div id="ms-events" class="msec'+(mktSec==="events"?" on":"")+'">'+sHTML5+'</div>'+
-    '<div id="ms-velocity" class="msec'+(mktSec==="velocity"?" on":"")+'">'+sHTML6+sHTML6b+'</div>'+
-    '<div id="ms-cadence" class="msec'+(mktSec==="cadence"?" on":"")+'">'+sHTML7+'</div>'+
-    '<div id="ms-funnel" class="msec'+(mktSec==="funnel"?" on":"")+'">'+(function(){try{return renderFunnel();}catch(e){return '<p style="font-size:11px;color:#94a3b8;padding:12px">Section unavailable: '+e.message+'</p>';}})()+(function(){try{return renderPipeAging();}catch(e){return '<p style="font-size:11px;color:#94a3b8;padding:12px">Section unavailable: '+e.message+'</p>';}})()+'</div>'+
-    '<div id="ms-lifecycle" class="msec'+(mktSec==="lifecycle"?" on":"")+'">'+(function(){try{return renderLifecycle();}catch(e){return '<p style="font-size:11px;color:#94a3b8;padding:12px">Section unavailable: '+e.message+'</p>';}})()+'</div>'+
-    '<div id="ms-brief" class="msec'+(mktSec==="brief"?" on":"")+'">'+(function(){try{return renderBrief();}catch(e){return '<p style="font-size:11px;color:#94a3b8;padding:12px">Section unavailable: '+e.message+'</p>';}})()+'</div>'+
+    '<div id="ms-'+mktSec+'" class="msec on">'+marketingSections[mktSec]+'</div>'+
     '</div></div>';  captureSnap(tPipe,attPct,parseFloat(avgROI),avgCPL,0);
   setTimeout(buildCharts,80);
 }
@@ -5230,7 +5616,7 @@ function renderMkt(){
 var chartInst={};var _pending={};
 function mk(id,cfg){
   var el=document.getElementById(id);
-  if(!el){_pending[id]=cfg;return;}
+  if(!el)return;
   if(el.clientWidth===0){_pending[id]=cfg;return;}
   if(chartInst[id])try{chartInst[id].destroy();}catch(e){}
   try{chartInst[id]=new Chart(el,cfg);delete _pending[id];}
@@ -5297,16 +5683,19 @@ function buildCharts(){
   var hCounts=DATA_MODE==="live"?[
     allProjs.filter(function(p){return p.declaredHealth==="on_track";}).length,
     allProjs.filter(function(p){return p.declaredHealth==="at_risk";}).length,
-    allProjs.filter(function(p){return p.declaredHealth==="off_track";}).length
+    allProjs.filter(function(p){return p.declaredHealth==="off_track";}).length,
+    allProjs.filter(function(p){return !p.declaredHealth||p.declaredHealth==="unreported";}).length
   ]:[
     allProjs.filter(function(p){return sc(p.tasks).v>=80;}).length,
     allProjs.filter(function(p){var v=sc(p.tasks).v;return v>=60&&v<80;}).length,
-    allProjs.filter(function(p){return sc(p.tasks).v<60;}).length
+    allProjs.filter(function(p){return sc(p.tasks).v<60;}).length,
+    0
   ];
   mk("ch-healthDonut",{type:"bar",data:{labels:["Portfolio health"],datasets:[
     {label:"On Track",data:[hCounts[0]],backgroundColor:"#10b981",borderRadius:5},
     {label:"At Risk",data:[hCounts[1]],backgroundColor:"#f59e0b",borderRadius:5},
-    {label:"Off Track",data:[hCounts[2]],backgroundColor:"#ef4444",borderRadius:5}
+    {label:"Off Track",data:[hCounts[2]],backgroundColor:"#ef4444",borderRadius:5},
+    {label:"No status",data:[hCounts[3]],backgroundColor:"#94a3b8",borderRadius:5}
   ]},options:{indexAxis:"y",responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:Object.assign({},tt)},scales:{x:{stacked:true,beginAtZero:true,grid:{display:false},ticks:{precision:0,color:tc}},y:{stacked:true,grid:{display:false},ticks:{color:tc}}}}});
 
   // Marketing ROI donut (attribution section)
@@ -5326,15 +5715,16 @@ function buildCharts(){
   var sd=C.filter(function(c){return c.roi!=null&&c.daysClose!=null;});
   mk("ch-roiClose",{type:"scatter",data:{datasets:[{data:sd.map(function(c){return {x:c.daysClose,y:c.roi,label:c.s};}),backgroundColor:sd.map(function(c){return roiC(c.roi);}),pointRadius:7,pointHoverRadius:9}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:Object.assign({},tt,{callbacks:{label:function(ctx){return [ctx.raw.label,"ROI: "+ctx.raw.y+"x","Close: "+ctx.raw.x+"d"];}}})},scales:{x:{grid:{color:gc},ticks:{color:tc,font:{size:10}},title:{display:true,text:"Days to close",color:tc,font:{size:10}}},y:{grid:{color:gc},ticks:{color:tc,font:{size:10},callback:function(v){return v+"x";}},title:{display:true,text:"ROI (x)",color:tc,font:{size:10}}}}}});
 
-  // ══ MQL Monthly trend area chart ══════════════════════════════════
-  mk("ch-mqlTrend",{type:"line",data:{labels:CAMP_MONTHLY.labels,datasets:[
-    {label:"MQL Volume",data:CAMP_MONTHLY.mql,borderColor:"#6366f1",backgroundColor:"rgba(99,102,241,.12)",fill:true,tension:.4,pointRadius:4,pointBackgroundColor:"#6366f1",pointBorderColor:"#fff",pointBorderWidth:2,borderWidth:2.5},
-    {label:"Target",data:CAMP_MONTHLY.mql.map(function(){return 250;}),borderColor:"rgba(100,116,139,.3)",borderDash:[5,5],pointRadius:0,borderWidth:1.5,fill:false}
+  // ══ MQL trend area chart — respects date range and period controls ═
+  var activePeriodData=getPeriodData(_chartPeriod);
+  mk("ch-mqlTrend",{type:"line",data:{labels:activePeriodData.labels,datasets:[
+    {label:"MQL Volume",data:activePeriodData.mql,borderColor:"#1abb9c",backgroundColor:"rgba(26,187,156,.12)",fill:true,tension:.4,pointRadius:4,pointBackgroundColor:"#1abb9c",pointBorderColor:"#fff",pointBorderWidth:2,borderWidth:2.5},
+    {label:"Target",data:activePeriodData.target,borderColor:"rgba(100,116,139,.3)",borderDash:[5,5],pointRadius:0,borderWidth:1.5,fill:false}
   ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:Object.assign({},tt,{callbacks:{label:function(ctx){return ctx.dataset.label+": "+ctx.raw+" MQLs";}}})},scales:{x:{grid:{display:false},ticks:{color:tc,font:{size:10}}},y:{grid:{color:gc},ticks:{color:tc,font:{size:10}},beginAtZero:true}}}});
 
   // ══ Pipeline monthly area chart ════════════════════════════════════
-  mk("ch-pipeTrend",{type:"line",data:{labels:CAMP_MONTHLY.labels,datasets:[
-    {label:"Pipeline ($K)",data:CAMP_MONTHLY.pipeline,borderColor:"#0891b2",backgroundColor:"rgba(8,145,178,.1)",fill:true,tension:.45,pointRadius:4,pointBackgroundColor:"#0891b2",pointBorderColor:"#fff",pointBorderWidth:2,borderWidth:2.5}
+  mk("ch-pipeTrend",{type:"line",data:{labels:activePeriodData.labels,datasets:[
+    {label:"Pipeline ($K)",data:activePeriodData.pipeline,borderColor:"#066fd1",backgroundColor:"rgba(6,111,209,.1)",fill:true,tension:.45,pointRadius:4,pointBackgroundColor:"#066fd1",pointBorderColor:"#fff",pointBorderWidth:2,borderWidth:2.5}
   ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:Object.assign({},tt,{callbacks:{label:function(ctx){return "$"+(ctx.raw>=1000?(ctx.raw/1000).toFixed(1)+"M":ctx.raw+"K");}}})},scales:{x:{grid:{display:false},ticks:{color:tc,font:{size:10}}},y:{grid:{color:gc},ticks:{color:tc,font:{size:10},callback:function(v){return "$"+(v>=1000?(v/1000).toFixed(0)+"M":v+"K");}},beginAtZero:true}}}});
 
   // ══ Budget allocation pie chart ════════════════════════════════════
